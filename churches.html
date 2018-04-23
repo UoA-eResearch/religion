@@ -36,6 +36,7 @@
           height: 18px;
           float: left;
           margin-right: 8px;
+          border-radius: 50%;
           opacity: 0.7;
       }
       .legend-source {
@@ -62,7 +63,8 @@
         muslim: "blue",
         buddhist: "green",
         hindu: "yellow",
-        jewish: "gray"
+        jewish: "gray",
+        unknown: "black"
       }
 
       var opl = new L.OverPassLayer({
@@ -104,8 +106,22 @@
           }).addTo(map);
         }
       });
-       
+
       map.addLayer(opl);
+
+      var legend = L.control({position: 'bottomright'});
+
+      legend.onAdd = function (map) {
+          var div = L.DomUtil.create('div', 'info legend');
+          for (var k in colors) {
+            var color = colors[k];
+            div.innerHTML += '<i style="background:' + color + ';border-color:' + color + '"></i> ' + k + '<br>';
+          }
+
+          return div;
+      };
+
+      legend.addTo(map);
     </script>
   </body>
 </html>
