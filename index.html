@@ -47,6 +47,9 @@
       }
       
       function formatDataForYear(yearData) {
+        if (yearData.Total_people_stated == null) {
+          return "No data";
+        }
         return "<div>Buddhist: " + getPctForReligion("Buddhist", yearData) +
                "%</div><div>Christian: " + getPctForReligion("Christian", yearData) +
                "%</div><div>Hindu: " + getPctForReligion("Hindu", yearData) +
