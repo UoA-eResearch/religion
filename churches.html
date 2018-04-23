@@ -89,6 +89,18 @@
                 color: color
               };
             },
+            filter: function (feature, layer) {
+              var isPolygon = (feature.geometry) && (feature.geometry.type !== undefined) && (feature.geometry.type === "Polygon");
+              if (isPolygon) {
+                feature.geometry.type = "Point";
+                var polygonCenter = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
+                feature.geometry.coordinates = [ polygonCenter.lat, polygonCenter.lng ];
+              }
+              return true;
+            },
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng);
+            }
           }).addTo(map);
         }
       });
