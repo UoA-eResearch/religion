@@ -67,19 +67,37 @@
         unknown: "black"
       }
 
+      var geoJSONLayer;
+      var markerLayer = L.layerGroup();
+
       var opl = new L.OverPassLayer({
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
         onSuccess: function(data) {
+          console.log(data);
           var geoJSON = osmtogeojson(data);
           console.log(geoJSON);
           function onEachFeature(feature, layer) {
             var tags = feature.properties.tags;
             var outString = "<h3>" + tags.name + "</h3><div>Religion: " + tags.religion + "</div><div>Denomination: " + tags.denomination + "</div>";
             layer.bindPopup(outString);
+            var isPolygon = (feature.geometry) && (feature.geometry.type !== undefined) && (feature.geometry.type === "Polygon");
+            var latlng;
+            if (isPolygon) {
+              var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
+              latlng = [center.lng, center.lat];
+            } else {
+              latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
+            }
+            var color = colors[tags.religion];
+            if (!color) {
+              color = "black";
+            }
+            var marker = L.circleMarker(latlng, {color: color}).addTo(markerLayer);
+            marker.bindPopup(outString);
           }
 
-          L.geoJSON(geoJSON, {
+          geoJSONLayer = L.geoJSON(geoJSON, {
             onEachFeature: onEachFeature,
             style: function (feature) {
               var tags = feature.properties.tags;
@@ -87,27 +105,36 @@
               if (!color) {
                 color = "black";
               }
-              return {
+              var style = {
                 color: color
-              };
+              }
+              return style;
             },
             filter: function (feature, layer) {
-              var isPolygon = (feature.geometry) && (feature.geometry.type !== undefined) && (feature.geometry.type === "Polygon");
-              if (isPolygon) {
-                feature.geometry.type = "Point";
-                var polygonCenter = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
-                feature.geometry.coordinates = [ polygonCenter.lat, polygonCenter.lng ];
-              }
-              return true;
+                return true;
             },
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng);
             }
-          }).addTo(map);
+          })
         }
       });
 
       map.addLayer(opl);
+      map.addLayer(markerLayer);
+
+      map.on('zoomend', function() {
+        console.log("zoomed to " + map.getZoom());
+        if (map.getZoom() < 16){
+          map.removeLayer(geoJSONLayer);
+          map.addLayer(markerLayer);
+          console.log("switching to markers");
+        } else {
+          map.removeLayer(markerLayer);
+          map.addLayer(geoJSONLayer);
+          console.log("switching to polys");
+        }
+      });
 
       var legend = L.control({position: 'bottomright'});
 
