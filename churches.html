@@ -67,8 +67,9 @@
         unknown: "black"
       }
 
-      var geoJSONLayer;
+      var geoJSONLayer = L.layerGroup();
       var markerLayer = L.layerGroup();
+      var addedIds = {};
 
       var opl = new L.OverPassLayer({
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
@@ -95,9 +96,10 @@
             }
             var marker = L.circleMarker(latlng, {color: color}).addTo(markerLayer);
             marker.bindPopup(outString);
+            layer.addTo(geoJSONLayer);
           }
 
-          geoJSONLayer = L.geoJSON(geoJSON, {
+          L.geoJSON(geoJSON, {
             onEachFeature: onEachFeature,
             style: function (feature) {
               var tags = feature.properties.tags;
@@ -111,7 +113,13 @@
               return style;
             },
             filter: function (feature, layer) {
+              var id = feature.id;
+              if (addedIds[id]) {
+                return false;
+              } else {
+                addedIds[id] = true;
                 return true;
+              }
             },
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng);
