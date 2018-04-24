@@ -74,6 +74,26 @@
       var markerLayer = L.layerGroup();
       var addedIds = {};
 
+      function popupHandler(popup) {
+        console.log(popup);
+        var panoElem = $(".pano", popup.popup._contentNode)[0];
+        var sv = new google.maps.StreetViewService();
+        sv.getPanorama({location: popup.popup._latlng}, function(data, status) {
+          if (status === 'OK') {
+            var pano = new google.maps.StreetViewPanorama(panoElem, {
+              position: popup.popup._latlng,
+              pov: {
+                heading: 0,
+                pitch: 0
+              },
+              zoom: 1
+            });
+          } else {
+            $(panoElem).text("No streetview for this location");
+          }
+        });
+      }
+
       var opl = new L.OverPassLayer({
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
@@ -84,7 +104,7 @@
           function onEachFeature(feature, layer) {
             var tags = feature.properties.tags;
             var outString = "<h3>" + tags.name + "</h3><div>Religion: " + tags.religion + "</div><div>Denomination: " + tags.denomination + "</div><div class='pano'></div>";
-            layer.bindPopup(outString);
+            layer.bindPopup(outString).on('popupopen', popupHandler);
             var latlng;
             if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
@@ -100,26 +120,7 @@
               color = "black";
             }
             var marker = L.circleMarker(latlng, {color: color}).addTo(markerLayer);
-            marker.bindPopup(outString)
-            .on('popupopen', function (popup) {
-                console.log(popup);
-                var panoElem = $(".pano", popup.popup._contentNode)[0];
-                var sv = new google.maps.StreetViewService();
-                sv.getPanorama({location: popup.popup._latlng}, function(data, status) {
-                  if (status === 'OK') {
-                    var pano = new google.maps.StreetViewPanorama(panoElem, {
-                      position: popup.popup._latlng,
-                      pov: {
-                        heading: 0,
-                        pitch: 0
-                      },
-                      zoom: 1
-                    });
-                  } else {
-                    $(panoElem).text("No streetview for this location");
-                  }
-                });
-            });
+            marker.bindPopup(outString).on('popupopen', popupHandler);
             layer.addTo(geoJSONLayer);
           }
 
