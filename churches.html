@@ -104,15 +104,21 @@
             .on('popupopen', function (popup) {
                 console.log(popup);
                 var panoElem = $(".pano", popup.popup._contentNode)[0];
-                var pano = new google.maps.StreetViewPanorama(panoElem, {
-                  position: popup.popup._latlng,
-                  pov: {
-                    heading: 0,
-                    pitch: 0
-                  },
-                  zoom: 1
+                var sv = new google.maps.StreetViewService();
+                sv.getPanorama({location: popup.popup._latlng}, function(data, status) {
+                  if (status === 'OK') {
+                    var pano = new google.maps.StreetViewPanorama(panoElem, {
+                      position: popup.popup._latlng,
+                      pov: {
+                        heading: 0,
+                        pitch: 0
+                      },
+                      zoom: 1
+                    });
+                  } else {
+                    $(panoElem).text("No streetview for this location");
+                  }
                 });
-                console.log(pano);
             });
             layer.addTo(geoJSONLayer);
           }
