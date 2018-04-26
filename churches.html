@@ -4,8 +4,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" integrity="sha256-iYUgmrapfDGvBrePJPrMWQZDcObdAcStKBpjP3Az+3s=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js" integrity="sha256-CNm+7c26DTTCGRQkM9vp7aP85kHFMqs9MhPEuytF+fQ=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-overpass-layer@2.8.2/dist/OverPassLayer.css" />
-    <script src="https://unpkg.com/leaflet-overpass-layer@2.8.2/dist/OverPassLayer.bundle.js"></script>
+    <script src="https://cdn.rawgit.com/UoA-eResearch/leaflet-overpass-layer/dc8dd9b02a4e1b213da7ac01ee960301556c0369/dist/OverPassLayer.bundle.js"></script>
     <script src="https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+    <script src="https://unpkg.com/leaflet-spin@1.1.0/leaflet.spin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
     <style>
@@ -100,6 +102,12 @@
       var opl = new L.OverPassLayer({
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
+        beforeRequest: function() {
+          map.spin(true);
+        },
+        afterRequest: function() {
+          map.spin(false);
+        },
         onSuccess: function(data) {
           console.log(data);
           var geoJSON = osmtogeojson(data);
