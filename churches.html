@@ -70,8 +70,8 @@
         christian: "red",
         muslim: "blue",
         buddhist: "green",
-        hindu: "yellow",
-        jewish: "gray",
+        hindu: "orange",
+        jewish: "purple",
         unknown: "black"
       }
 
@@ -188,6 +188,7 @@
 
       legend.onAdd = function (map) {
           var div = L.DomUtil.create('div', 'info legend');
+          div.innerHTML += "<h4>Places of worship</h4>";
           for (var k in colors) {
             var color = colors[k];
             div.innerHTML += '<i style="background:' + color + ';border-color:' + color + '"></i> ' + k + '<br>';
