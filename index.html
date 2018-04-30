@@ -45,6 +45,32 @@
         clear: both;
         float: right;
       }
+      table {
+        border: 3px solid #000000;
+        width: 100%;
+        text-align: left;
+        border-collapse: collapse;
+      }
+      table td, table th {
+        border: 1px solid #000000;
+        padding: 5px 4px;
+      }
+      table tbody td {
+        font-size: 13px;
+      }
+      table thead {
+        background: #CFCFCF;
+        background: -moz-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+        background: -webkit-linear-gradient(top, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+        background: linear-gradient(to bottom, #dbdbdb 0%, #d3d3d3 66%, #CFCFCF 100%);
+        border-bottom: 3px solid #000000;
+      }
+      table thead th {
+        font-size: 15px;
+        font-weight: bold;
+        color: #000000;
+        text-align: left;
+      }
     </style>
   </head>
   <body>
@@ -72,29 +98,38 @@
       }
       
       function getPctForReligion(religion, yearData) {
-        if (religion == "Christian") {
-          return round((yearData.Christian + yearData.Maori_Christian) / yearData.Total_people_stated * 100, 1);
-        } else {
-          return round(yearData[religion] / yearData.Total_people_stated * 100, 1);
-        }
-      }
-      
-      function formatDataForYear(yearData) {
         if (yearData.Total_people_stated == null) {
           return "No data";
         }
-        return "<div>Buddhist: " + getPctForReligion("Buddhist", yearData) +
-               "%</div><div>Christian: " + getPctForReligion("Christian", yearData) +
-               "%</div><div>Hindu: " + getPctForReligion("Hindu", yearData) +
-               "%</div><div>Jewish: " + getPctForReligion("Judaism/_Jewish", yearData) +
-               "%</div><div>Muslim: " + getPctForReligion("Islam/Muslim", yearData) +
-               "%</div><div>No Religion: " + getPctForReligion("No_Religion", yearData) +
-               "%</div><div>New Age: " + getPctForReligion("Spiritualism_and_New_Age_Religions", yearData) +
-               "%</div><div>Total people stated: " + yearData.Total_people_stated;
+        if (religion == "Christian") {
+          return round((yearData.Christian + yearData.Maori_Christian) / yearData.Total_people_stated * 100, 1) + "%";
+        } else {
+          return round(yearData[religion] / yearData.Total_people_stated * 100, 1) + "%";
+        }
       }
       
+      function handleNull(string) {
+        if (!string) {
+          return "No data";
+        }
+        return string;
+      }
+
       function formatData(data) {
-        return "<h2>" + data.desc + "</h2><h3>2001</h3>" + formatDataForYear(data[2001]) + "<h3>2006</h3>" + formatDataForYear(data[2006]) + "<h3>2013</h3>" + formatDataForYear(data[2013]);
+        var header = "<h2>" + data.desc + "</h2>"
+        if (data[2001].Total_people_stated == null && data[2006].Total_people_stated == null && data[2013].Total_people_stated == null) {
+          return header + "No data";
+        }
+        return header + "<table><thead><th></th><th>2001</th><th>2006</th><th>2013</th></thead><tbody>" +
+          "<tr><td>Buddhist</td><td>" + getPctForReligion("Buddhist", data[2001]) + "</td><td>" + getPctForReligion("Buddhist", data[2006]) + "</td><td>" + getPctForReligion("Buddhist", data[2013]) + "</td></tr>" +
+          "<tr><td>Christian</td><td>" + getPctForReligion("Christian", data[2001]) + "</td><td>" + getPctForReligion("Christian", data[2006]) + "</td><td>" + getPctForReligion("Christian", data[2013]) + "</td></tr>" +
+          "<tr><td>Hindu</td><td>" + getPctForReligion("Hindu", data[2001]) + "</td><td>" + getPctForReligion("Hindu", data[2006]) + "</td><td>" + getPctForReligion("Hindu", data[2013]) + "</td></tr>" +
+          "<tr><td>Jewish</td><td>" + getPctForReligion("Judaism/_Jewish", data[2001]) + "</td><td>" + getPctForReligion("Judaism/_Jewish", data[2006]) + "</td><td>" + getPctForReligion("Judaism/_Jewish", data[2013]) + "</td></tr>" +
+          "<tr><td>Muslim</td><td>" + getPctForReligion("Islam/Muslim", data[2001]) + "</td><td>" + getPctForReligion("Islam/Muslim", data[2006]) + "</td><td>" + getPctForReligion("Islam/Muslim", data[2013]) + "</td></tr>" +
+          "<tr><td>No Religion</td><td>" + getPctForReligion("No_Religion", data[2001]) + "</td><td>" + getPctForReligion("No_Religion", data[2006]) + "</td><td>" + getPctForReligion("No_Religion", data[2013]) + "</td></tr>" +
+          "<tr><td>New Age</td><td>" + getPctForReligion("Spiritualism_and_New_Age_Religions", data[2001]) + "</td><td>" + getPctForReligion("Spiritualism_and_New_Age_Religions", data[2006]) + "</td><td>" + getPctForReligion("Spiritualism_and_New_Age_Religions", data[2013]) + "</td></tr>" +
+          "<tr><td>Total people stated</td><td>" + handleNull(data[2001].Total_people_stated) + "</td><td>" + handleNull(data[2006].Total_people_stated) + "</td><td>" + handleNull(data[2013].Total_people_stated) + "</td></tr>"
+          + "</tbody></table>";
       }
       
       $.getJSON("religion.json", function(data) {
