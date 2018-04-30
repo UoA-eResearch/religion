@@ -68,8 +68,8 @@
       
       var colors = {
         christian: "red",
-        muslim: "blue",
-        buddhist: "green",
+        muslim: "green",
+        buddhist: "blue",
         hindu: "orange",
         jewish: "purple",
         unknown: "black"
@@ -101,7 +101,9 @@
 
       function capitilize(string) {
         if (string) {
-          return string.charAt(0).toUpperCase() + string.substr(1);
+          return string.replace("_", " ").replace("catholc", "catholic").replace(/\w\S*/g, function(txt){
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          });
         }
       }
 
