@@ -189,8 +189,66 @@
         }
       });
 
+      var townhalls = new L.OverPassLayer({
+        query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}}););out body;>;out skel qt;',
+        minZoom: 10,
+        onSuccess: function(data) {
+          console.log(data);
+          var geoJSON = osmtogeojson(data);
+          console.log(geoJSON);
+          function onEachFeature(feature, layer) {
+            var tags = feature.properties.tags;
+            var outString = "<h3>" + tags.name + "</h3><div class='pano'></div>";
+            layer.bindPopup(outString, {
+              maxWidth: "auto"
+            }).on('popupopen', popupHandler);
+            var latlng;
+            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
+              var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
+              latlng = [center.lng, center.lat];
+            } else if (feature.geometry.type == "Point") {
+              latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
+            } else {
+              console.error("Don't know how to handle", feature);
+              return;
+            }
+            var color = "hotpink";
+            var marker = L.circleMarker(latlng, {color: color}).addTo(markerLayer);
+            marker.bindPopup(outString, {
+              maxWidth: "auto"
+            }).on('popupopen', popupHandler);
+            layer.addTo(geoJSONLayer);
+          }
+
+          L.geoJSON(geoJSON, {
+            onEachFeature: onEachFeature,
+            style: function (feature) {
+              var tags = feature.properties.tags;
+              var color = "hotpink";
+              var style = {
+                color: color
+              }
+              return style;
+            },
+            filter: function (feature, layer) {
+              var id = feature.id;
+              if (addedIds[id]) {
+                return false;
+              } else {
+                addedIds[id] = true;
+                return true;
+              }
+            },
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng);
+            }
+          })
+        }
+      });
+
       map.addLayer(opl);
       map.addLayer(markerLayer);
+      map.addLayer(townhalls);
 
       map.on('zoomend', function() {
         console.log("zoomed to " + map.getZoom());
@@ -214,6 +272,8 @@
             var color = colors[k];
             div.innerHTML += '<i style="background:' + color + ';border-color:' + color + '"></i> ' + capitilize(k) + '<br>';
           }
+
+          div.innerHTML += '<br><h4>Municipal buildings</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls<br>';
 
           return div;
       };
