@@ -76,7 +76,8 @@
         }),
         style: 'bar',
         autoComplete: true,
-        autoCompleteDelay: 250
+        autoCompleteDelay: 250,
+        autoClose: true
       }).addTo(map);
 
       var colors = {
@@ -140,7 +141,7 @@
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
             var latlng;
-            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
+            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon" || feature.geometry.type == "LineString") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
               latlng = [center.lng, center.lat];
             } else if (feature.geometry.type == "Point") {
@@ -203,7 +204,7 @@
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
             var latlng;
-            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
+            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon" || feature.geometry.type == "LineString") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
               latlng = [center.lng, center.lat];
             } else if (feature.geometry.type == "Point") {
