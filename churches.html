@@ -141,11 +141,14 @@
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
             var latlng;
-            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon" || feature.geometry.type == "LineString") {
+            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
               latlng = [center.lng, center.lat];
             } else if (feature.geometry.type == "Point") {
               latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
+            } else if (feature.geometry.type == "LineString") {
+              var center = L.latLngBounds(feature.geometry.coordinates).getCenter();
+              latlng = [center.lng, center.lat];
             } else {
               console.error("Don't know how to handle", feature);
               return;
@@ -204,11 +207,14 @@
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
             var latlng;
-            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon" || feature.geometry.type == "LineString") {
+            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
               latlng = [center.lng, center.lat];
             } else if (feature.geometry.type == "Point") {
               latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
+            } else if (feature.geometry.type == "LineString") {
+              var center = L.latLngBounds(feature.geometry.coordinates).getCenter();
+              latlng = [center.lng, center.lat];
             } else {
               console.error("Don't know how to handle", feature);
               return;
