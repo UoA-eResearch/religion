@@ -12,6 +12,7 @@
     <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@latest/assets/css/leaflet.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
+    <script src="https://unpkg.com/leaflet-svg-shape-markers@1.0.0/dist/leaflet-svg-shape-markers.min.js"></script>
     <style>
       html, body, #map {
         height: 100%;
@@ -41,9 +42,11 @@
           height: 18px;
           float: left;
           margin-right: 8px;
-          border-radius: 50%;
           opacity: 0.7;
           clear: left;
+      }
+      .legend i.circle {
+          border-radius: 50%;
       }
       .legend-source {
         font-size: 70%;
@@ -187,7 +190,7 @@
               }
             },
             pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng);
+                return L.circleMarker(latlng); // how nodes (single latlng) elements should be handled (they'll still get the click handler from onEachFeature)
             }
           })
         }
@@ -220,7 +223,7 @@
               return;
             }
             var color = "hotpink";
-            var marker = L.circleMarker(latlng, {color: color}).addTo(markerLayer);
+            var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(markerLayer);
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
@@ -247,7 +250,7 @@
               }
             },
             pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng);
+                return L.shapeMarker(latlng, {shape: "square", radius: 20});
             }
           })
         }
@@ -277,7 +280,7 @@
           div.innerHTML += "<h4>Places of worship</h4>";
           for (var k in colors) {
             var color = colors[k];
-            div.innerHTML += '<i style="background:' + color + ';border-color:' + color + '"></i> ' + capitilize(k) + '<br>';
+            div.innerHTML += '<i class="circle" style="background:' + color + ';border-color:' + color + '"></i> ' + capitilize(k) + '<br>';
           }
 
           div.innerHTML += '<br><h4>Municipal buildings</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls<br>';
