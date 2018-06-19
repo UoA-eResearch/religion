@@ -92,8 +92,14 @@
         unknown: "black"
       }
 
-      var geoJSONLayer = L.layerGroup();
-      var markerLayer = L.layerGroup();
+      var placesOfWorship = L.layerGroup().addTo(map);
+      var municipal = L.layerGroup().addTo(map);
+
+      var powPoly = L.layerGroup();
+      var powPoint = L.layerGroup().addTo(placesOfWorship);
+
+      var municipalPoly = L.layerGroup();
+      var municipalPoint = L.layerGroup().addTo(municipal);
       var addedIds = {};
 
       function popupHandler(popup) {
@@ -160,11 +166,11 @@
             if (!color) {
               color = "black";
             }
-            var marker = L.circleMarker(latlng, {color: color}).addTo(markerLayer);
+            var marker = L.circleMarker(latlng, {color: color}).addTo(powPoint);
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
-            layer.addTo(geoJSONLayer);
+            layer.addTo(powPoly);
           }
 
           L.geoJSON(geoJSON, {
@@ -223,11 +229,11 @@
               return;
             }
             var color = "hotpink";
-            var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(markerLayer);
+            var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
-            layer.addTo(geoJSONLayer);
+            layer.addTo(municipalPoly);
           }
 
           L.geoJSON(geoJSON, {
@@ -257,18 +263,28 @@
       });
 
       map.addLayer(opl);
-      map.addLayer(markerLayer);
       map.addLayer(townhalls);
+
+      var overlayMaps = {
+        "Places of worship": placesOfWorship,
+        "Municipal buildings": municipal
+      }
+
+      L.control.layers(null, overlayMaps).addTo(map);
 
       map.on('zoomend', function() {
         console.log("zoomed to " + map.getZoom());
         if (map.getZoom() < 16){
-          map.removeLayer(geoJSONLayer);
-          map.addLayer(markerLayer);
+          placesOfWorship.removeLayer(powPoly);
+          placesOfWorship.addLayer(powPoint);
+          municipal.removeLayer(municipalPoly);
+          municipal.addLayer(municipalPoint);
           console.log("switching to markers");
         } else {
-          map.removeLayer(markerLayer);
-          map.addLayer(geoJSONLayer);
+          placesOfWorship.removeLayer(powPoint);
+          placesOfWorship.addLayer(powPoly);
+          municipal.removeLayer(municipalPoint);
+          municipal.addLayer(municipalPoly);
           console.log("switching to polys");
         }
       });
