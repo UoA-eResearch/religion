@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@latest/assets/css/leaflet.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
     <script src="https://unpkg.com/leaflet-svg-shape-markers@1.0.0/dist/leaflet-svg-shape-markers.min.js"></script>
+    <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
     <style>
       html, body, #map {
         height: 100%;
@@ -66,10 +67,7 @@
       var map = L.map('map', {
         worldCopyJump: true,
       }).setView([-36.8862,174.7651], 12);
-      L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-	      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a> POI via <a href="http://www.overpass-api.de/">Overpass API</a>',
-	      subdomains: 'abcd'
-      }).addTo(map);
+      var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
       
       var geoSearch = new GeoSearch.GeoSearchControl({
         provider: new GeoSearch.GoogleProvider({
@@ -139,6 +137,7 @@
         afterRequest: function() {
           map.spin(false);
         },
+        attribution: 'POI via <a href="http://www.overpass-api.de/">Overpass API</a>',
         onSuccess: function(data) {
           console.log(data);
           var geoJSON = osmtogeojson(data);
@@ -265,12 +264,19 @@
       map.addLayer(opl);
       map.addLayer(townhalls);
 
+      var baseMaps = {
+        "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
+        "OSM Grayscale": L.tileLayer.provider("OpenStreetMap.BlackAndWhite"),
+        "CartoDB Positron": positron,
+        "Wikimedia": L.tileLayer.provider("Wikimedia")
+      }
+
       var overlayMaps = {
         "Places of worship": placesOfWorship,
         "Municipal buildings": municipal
       }
 
-      L.control.layers(null, overlayMaps).addTo(map);
+      L.control.layers(baseMaps, overlayMaps).addTo(map);
 
       map.on('zoomend', function() {
         console.log("zoomed to " + map.getZoom());
