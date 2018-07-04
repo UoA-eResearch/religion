@@ -122,7 +122,7 @@
 
       function capitilize(string) {
         if (string) {
-          return string.replace("_", " ").replace("catholc", "catholic").replace(/\w\S*/g, function(txt){
+          return string.replace(/_/g, " ").replace("catholc", "catholic").replace(/\w\S*/g, function(txt){
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
           });
         }
@@ -144,7 +144,7 @@
           console.log(geoJSON);
           function onEachFeature(feature, layer) {
             var tags = feature.properties.tags;
-            var outString = "<h3>" + tags.name + "</h3><div>Religion: " + capitilize(tags.religion) + "</div><div>Denomination: " + capitilize(tags.denomination) + "</div><div class='pano'></div>";
+            var outString = "<h3>" + tags.name + "</h3><div>Religion: " + capitilize(tags.religion) + "</div><div>Denomination: " + capitilize(tags.denomination) + "</div><div>Established: " + tags.start_date + "</div><div class='pano'></div>";
             layer.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
