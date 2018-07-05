@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Religious Diversity in NZ</title>
+    <title>Religious trends in NZ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" integrity="sha256-iYUgmrapfDGvBrePJPrMWQZDcObdAcStKBpjP3Az+3s=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js" integrity="sha256-CNm+7c26DTTCGRQkM9vp7aP85kHFMqs9MhPEuytF+fQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js" integrity="sha256-rVeyUZMfAHhQJ7hvWaHrKknTDdqGcn1gxBBJA++E4z8=" crossorigin="anonymous"></script>
@@ -71,9 +71,27 @@
         color: #000000;
         text-align: left;
       }
+
+      #title {
+        position: absolute;
+        top: 10;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 1000;
+        width: 400px;
+        text-align: center;
+        color: white;
+        border-radius: 20px;
+        padding: 10px;
+        background-color:rgba(0, 0, 0, 0.8);
+        font: Arial, Helvetica, sans-serif;
+        text-shadow: 2px 2px #000000;
+      }
     </style>
   </head>
   <body>
+    <h1 id="title">Religious trends in NZ</h1>
     <div id="map"></div>
     <script>
       var map = L.map('map').setView([-41.235726,172.5118422], 6);
