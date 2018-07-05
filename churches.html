@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>OSM places of worship</title>
+    <title>Global worship map</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" integrity="sha256-iYUgmrapfDGvBrePJPrMWQZDcObdAcStKBpjP3Az+3s=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js" integrity="sha256-CNm+7c26DTTCGRQkM9vp7aP85kHFMqs9MhPEuytF+fQ=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-overpass-layer@2.8.2/dist/OverPassLayer.css" />
@@ -59,9 +59,27 @@
         height: 300px;
         width: 500px;
       }
+
+      #title {
+        position: absolute;
+        top: 10;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 1000;
+        width: 400px;
+        text-align: center;
+        color: white;
+        border-radius: 20px;
+        padding: 10px;
+        background-color:rgba(0, 0, 0, 0.8);
+        font: Arial, Helvetica, sans-serif;
+        text-shadow: 2px 2px #000000;
+      }
     </style>
   </head>
   <body>
+    <h1 id="title">Global worship map</h1>
     <div id="map"></div>
     <script>
       var map = L.map('map', {
