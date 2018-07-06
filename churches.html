@@ -256,6 +256,9 @@
       }
 
       L.control.layers(baseMaps, overlayMaps, {position: "topleft"}).addTo(map);
+      
+      $(".leaflet-control-layers-base").prepend("<b>Basemaps</b>");
+      $(".leaflet-control-layers-overlays").prepend("<b>Overlays</b>");
 
       L.control.zoom({
            position:'topleft'
