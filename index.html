@@ -16,20 +16,23 @@
       }
 
       .info {
-          padding: 6px 8px;
+          padding: 15px;
           font: 14px/16px Arial, Helvetica, sans-serif;
-          background: white;
-          background: rgba(255,255,255,0.8);
+          background: rgba(0,0,0,0.8);
+          color: white;
           box-shadow: 0 0 15px rgba(0,0,0,0.2);
           border-radius: 5px;
       }
       .info h4 {
           margin: 0 0 5px;
-          color: #777;
+          color: white;
       }
       .legend {
           line-height: 18px;
-          color: #555;
+          color: white;
+          width: 207px;
+          padding: 20px;
+          margin-top: 30px !important;
       }
       .legend i {
           width: 18px;
@@ -38,6 +41,9 @@
           margin-right: 8px;
           opacity: 0.7;
           clear: left;
+      }
+      .legend i.circle {
+          border-radius: 50%;
       }
       .legend-source {
         font-size: 70%;
@@ -72,9 +78,11 @@
         text-align: left;
       }
 
+      
+
       #title {
         position: absolute;
-        top: 10;
+        top: 30;
         left: 0;
         right: 0;
         margin: auto;
@@ -82,11 +90,54 @@
         width: 400px;
         text-align: center;
         color: white;
-        border-radius: 20px;
+        border-radius: 5px;
         padding: 10px;
         background-color:rgba(0, 0, 0, 0.8);
-        font: Arial, Helvetica, sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
         text-shadow: 2px 2px #000000;
+      }
+      
+      .leaflet-touch .leaflet-bar a {
+        background-color: transparent;
+        color: white;
+      }
+      
+      .leaflet-touch .leaflet-bar a:hover {
+        background-color: gray;
+        color: #555;
+      }
+      
+      .leaflet-touch .leaflet-control-geosearch a.leaflet-bar-part:before {
+        border-top: 2px solid white;
+      }
+      
+      .leaflet-touch .leaflet-control-geosearch a.leaflet-bar-part:after {
+        border: 2px solid white;
+      }
+      
+      .leaflet-touch .leaflet-control-layers-toggle {
+        width: 30px;
+        height: 30px;
+      }
+      
+      .leaflet-control {
+        background-color: rgba(0,0,0,0.8) !important;
+        color: white !important;
+      }
+      
+      .leaflet-control-layers-expanded {
+        width: 207px;
+        padding: 20px;
+      }
+      
+      .leaflet-control-layers-selector {
+        margin-left: 0;
+      }
+      
+      .leaflet-top {
+        top: inherit;
+        bottom: 30;
+        left: 30;
       }
     </style>
   </head>
@@ -181,7 +232,7 @@
         }).addTo(map);
       });
 
-      var legend = L.control({position: 'bottomright'});
+      var legend = L.control({position: 'topleft'});
 
       legend.onAdd = function (map) {
           var div = L.DomUtil.create('div', 'info legend');
