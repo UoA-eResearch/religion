@@ -22,7 +22,7 @@
     <script>
       var map = L.map('map', {
         worldCopyJump: true,
-        zoomControl: false
+        zoomControl: false // Zoom added layer for ordering
       }).setView([-36.8862,174.7651], 12);
       var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
 
