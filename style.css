@@ -133,6 +133,10 @@ input:hover {
   margin-left: 0;
 }
 
+.leaflet-control-layers-separator {
+  display: none;
+}
+
 .leaflet-top {
   top: inherit;
   bottom: 30;
