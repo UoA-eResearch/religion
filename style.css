@@ -134,7 +134,8 @@ input:hover {
 }
 
 .leaflet-control-layers-separator {
-  display: none;
+  border-top: none;
+  margin-bottom: 15px;
 }
 
 .leaflet-top {
