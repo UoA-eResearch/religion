@@ -102,8 +102,13 @@ table thead th {
   color: #555;
 }
 
-input:hover {
-  background-color: gray;
+.leaflet-control-geosearch {
+  color: black !important;
+  z-index: 1000;
+}
+
+.leaflet-control-geosearch a {
+  color: black !important;
 }
 
 .leaflet-touch .leaflet-control-geosearch a.leaflet-bar-part:before {
@@ -121,7 +126,7 @@ input:hover {
 
 .leaflet-control {
   background-color: rgba(0,0,0,0.8) !important;
-  color: white !important;
+  color: white;
 }
 
 .leaflet-control-layers-expanded {
