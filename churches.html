@@ -46,12 +46,17 @@
 
       var placesOfWorship = L.layerGroup().addTo(map);
       var municipal = L.layerGroup().addTo(map);
+      var school = L.layerGroup()//.addTo(map);
 
       var powPoly = L.layerGroup();
       var powPoint = L.layerGroup().addTo(placesOfWorship);
 
       var municipalPoly = L.layerGroup();
       var municipalPoint = L.layerGroup().addTo(municipal);
+
+      var schoolPoly = L.layerGroup();
+      var schoolPoint = L.layerGroup().addTo(school);
+
       var addedIds = {};
 
       function popupHandler(popup) {
@@ -110,6 +115,13 @@
           }
         });
         $("#townhallC").text(count);
+        count = 0;
+        schoolPoint.eachLayer(function(layer) {
+          if(map.getBounds().contains(layer.getLatLng())) {
+            count++;
+          }
+        });
+        $("#schoolC").text(count);
       }
 
       var opl = new L.OverPassLayer({
@@ -188,7 +200,7 @@
       });
 
       var townhalls = new L.OverPassLayer({
-        query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}}););out body;>;out skel qt;',
+        query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}});node["amenity"="school"]({{bbox}});way["amenity"="school"]({{bbox}});relation["amenity"="school"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
         onSuccess: function(data) {
           console.log(data);
@@ -213,19 +225,29 @@
               console.error("Don't know how to handle", feature);
               return;
             }
-            var color = "hotpink";
-            var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
+            if (tags.amenity == "townhall") {
+              var color = "hotpink";
+              var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
+              layer.addTo(municipalPoly);
+            } else if (tags.amenity == "school") {
+              var color = "blue";
+              var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(schoolPoint);
+              layer.addTo(schoolPoly);
+            }
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
-            layer.addTo(municipalPoly);
           }
 
           L.geoJSON(geoJSON, {
             onEachFeature: onEachFeature,
             style: function (feature) {
               var tags = feature.properties.tags;
-              var color = "hotpink";
+              if (tags.amenity == "townhall") {
+                var color = "hotpink";
+              } else if (tags.amenity == "school") {
+                var color = "blue";
+              }
               var style = {
                 color: color
               }
@@ -266,7 +288,8 @@
 
       var overlayMaps = {
         "Places of worship": placesOfWorship,
-        "Municipal buildings": municipal
+        "Municipal buildings": municipal,
+        "Schools": school,
       }
 
       L.control.layers(baseMaps, overlayMaps, {position: "topleft"}).addTo(map);
@@ -294,12 +317,16 @@
           placesOfWorship.addLayer(powPoint);
           municipal.removeLayer(municipalPoly);
           municipal.addLayer(municipalPoint);
+          school.removeLayer(schoolPoly);
+          school.addLayer(schoolPoint);
           console.log("switching to markers");
         } else {
           placesOfWorship.removeLayer(powPoint);
           placesOfWorship.addLayer(powPoly);
           municipal.removeLayer(municipalPoint);
           municipal.addLayer(municipalPoly);
+          school.removeLayer(schoolPoint);
+          school.addLayer(schoolPoly);
           console.log("switching to polys");
         }
       });
@@ -319,7 +346,7 @@
             div.innerHTML += '<i class="circle" style="background:' + color + ';border-color:' + color + '"></i> ' + capitilize(k) + ': <span id="' + k + 'C"></span><br>';
           }
 
-          div.innerHTML += '<br><h4>Municipal buildings</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls: <span id="townhallC"></span><br>';
+          div.innerHTML += '<br><h4>Other public infrastructure</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls: <span id="townhallC"></span><br><i style="background:blue;border-color:blue"></i>Schools: <span id="schoolC"></span>';
 
           return div;
       };
