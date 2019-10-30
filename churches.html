@@ -125,6 +125,7 @@
       }
 
       var opl = new L.OverPassLayer({
+        endPoint: "https://overpass.kumi.systems/api/",
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
         beforeRequest: function() {
@@ -200,6 +201,7 @@
       });
 
       var townhalls = new L.OverPassLayer({
+        endPoint: "https://overpass.kumi.systems/api/",
         query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}});node["amenity"="school"]({{bbox}});way["amenity"="school"]({{bbox}});relation["amenity"="school"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
         onSuccess: function(data) {
