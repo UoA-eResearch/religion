@@ -279,11 +279,7 @@
       }).addTo(map);
 
       var geoSearch = new GeoSearch.GeoSearchControl({
-        provider: new GeoSearch.GoogleProvider({
-          params: {
-            key: 'AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs',
-          }
-        }),
+        provider: new GeoSearch.OpenStreetMapProvider(),
         style: 'button',
         autoComplete: true,
         autoCompleteDelay: 250,
