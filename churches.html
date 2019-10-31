@@ -68,6 +68,17 @@
       var timeline = new vis.Timeline(container, dataset, options);
       timeline.setWindow("1800", "2100");
 
+      timeline.on('select', function (properties) {
+        var selected = properties.items[0];
+        for (var i in markers) {
+          var marker = markers[i];
+          if (marker.id == selected) {
+            console.log(marker);
+            marker.openPopup();
+          }
+        }
+      });
+
       timeline.addCustomTime(new Date(), 1);
 
       function update() {
@@ -261,6 +272,7 @@
             }
             var marker = L.circleMarker(latlng, {color: color}).addTo(powPoint);
             marker.religion = tags.religion;
+            marker.id = feature.id;
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
@@ -370,6 +382,7 @@
               markers.push(marker);
               markers.push(layer);
             }
+            marker.id = feature.id;
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
