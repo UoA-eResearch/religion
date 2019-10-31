@@ -101,8 +101,8 @@
               var bounds = timeline.getItemRange();
               var ct = timeline.getCustomTime(1);
               var newTime = moment(ct).add(1, "year");
-              if (newTime < new Date(bounds.start) || newTime > new Date(bounds.end)) {
-                  newTime = bounds.start;
+              if (newTime < new Date(bounds.min) || newTime > new Date(bounds.max)) {
+                  newTime = bounds.min;
               }
               timeline.setCustomTime(newTime, 1);
               update();
