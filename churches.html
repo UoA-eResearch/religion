@@ -99,11 +99,12 @@
       var playing = false;
       var playInterval = setInterval(function() {
           if (playing) {
-              var bounds = timeline.getItemRange();
+              var min = dataset.min("start").start;
+              var max = dataset.max("start").start;
               var ct = timeline.getCustomTime(1);
               var newTime = moment(ct).add(1, "year");
-              if (newTime < new Date(bounds.min) || newTime > new Date(bounds.max)) {
-                  newTime = bounds.min;
+              if (newTime < min || newTime > max) {
+                  newTime = min;
               }
               timeline.setCustomTime(newTime, 1);
               update();
