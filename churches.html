@@ -314,7 +314,7 @@
                 return L.circleMarker(latlng); // how nodes (single latlng) elements should be handled (they'll still get the click handler from onEachFeature)
             }
           })
-          updateStats();
+          update();
         }
       });
 
@@ -413,7 +413,7 @@
                 return L.shapeMarker(latlng, {shape: "square", radius: 20});
             }
           })
-          updateStats();
+          update();
         }
       });
 
