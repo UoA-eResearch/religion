@@ -142,7 +142,8 @@
         unknown: "black"
       }
 
-      var markers = []
+      var markers = [];
+      var timelinePoints = [];
 
       var placesOfWorship = L.layerGroup().addTo(map);
       var municipal = L.layerGroup().addTo(map);
@@ -205,6 +206,16 @@
             }
           }
         });
+        for (var i in timelinePoints) {
+          var row = timelinePoints[i];
+          if (map.getBounds().contains(row.latlng)) {
+            try {
+              dataset.add(row);
+            } catch {}
+          } else {
+            dataset.remove(row);
+          }
+        }
         for (var k in powCounts) {
           $("#" + k + "C").text(powCounts[k]);
         }
@@ -299,7 +310,7 @@
                 dt.setDate(Math.random() * 365);
               }
               if (dt != "Invalid Date") {
-                dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
+                timelinePoints.push({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date, latlng: latlng});
                 marker.dt = dt;
                 layer.dt = dt;
               }
@@ -403,7 +414,7 @@
                 dt.setDate(Math.random() * 365);
               }
               if (dt != "Invalid Date") {
-                dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
+                timelinePoints.push({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date, latlng: latlng});
                 marker.dt = dt;
                 layer.dt = dt;
               }
