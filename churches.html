@@ -56,6 +56,11 @@
       var options = {
           min: "0000",
           max: "2100",
+          format: {
+            minorLabels: {
+              //year: "YYYY [AD]"
+            }
+          },
           type: 'point',
           width: "100%",
           maxHeight: "100%",
@@ -66,7 +71,7 @@
 
       // Create a Timeline
       var timeline = new vis.Timeline(container, dataset, options);
-      timeline.setWindow("1800", "2019");
+      timeline.setWindow("1800", "2050");
 
       timeline.on('select', function (properties) {
         var selected = properties.items[0];
