@@ -214,6 +214,7 @@
         endPoint: "https://overpass.kumi.systems/api/",
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
+        timeout: 3 * 60 * 1000,
         beforeRequest: function() {
           map.spin(true);
         },
@@ -221,6 +222,12 @@
           map.spin(false);
         },
         attribution: 'POI via <a href="http://www.overpass-api.de/">Overpass API</a>',
+        onError: function(xhr) {
+          console.error(xhr);
+        },
+        onTimeout: function(xhr) {
+          console.error(xhr);
+        },
         onSuccess: function(data) {
           console.log(data);
           var geoJSON = osmtogeojson(data);
@@ -313,6 +320,7 @@
         endPoint: "https://overpass.kumi.systems/api/",
         query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}});node["amenity"="school"]({{bbox}});way["amenity"="school"]({{bbox}});relation["amenity"="school"]({{bbox}}););out body;>;out skel qt;',
         minZoom: 10,
+        timeout: 3 * 60 * 1000,
         onSuccess: function(data) {
           console.log(data);
           var geoJSON = osmtogeojson(data);
