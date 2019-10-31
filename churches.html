@@ -75,16 +75,16 @@
               var marker = markers[i];
               if (marker.dt) {
                 if (marker.dt > t) {
-                  marker.removeFrom(powPoint);
+                  marker.removeFrom(marker.parentLayer);
                 } else {
-                  marker.addTo(powPoint);
+                  marker.addTo(marker.parentLayer);
                 }
               } else {
                 // No date defined for marker
                 if (t > new Date("2019-01-01")) {
-                  marker.addTo(powPoint);
+                  marker.addTo(marker.parentLayer);
                 } else {
-                  marker.removeFrom(powPoint);
+                  marker.removeFrom(marker.parentLayer);
                 }
               }
           }
@@ -255,8 +255,12 @@
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
             marker.bindTooltip(tags.name);
+            marker.parentLayer = powPoint;
             markers.push(marker);
             layer.addTo(powPoly);
+            layer.parentLayer = powPoly;
+            markers.push(layer);
+
 
             if (tags.start_date) {
               // Timeline functionality
@@ -270,6 +274,7 @@
               if (dt != "Invalid Date") {
                 dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
                 marker.dt = dt;
+                layer.dt = dt;
               }
             }
           }
@@ -336,15 +341,39 @@
               var color = "hotpink";
               var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
               layer.addTo(municipalPoly);
+              marker.parentLayer = municipalPoint;
+              layer.parentLayer = municipalPoly;
+              markers.push(marker);
+              markers.push(layer);
             } else if (tags.amenity == "school") {
               var color = "blue";
               var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(schoolPoint);
               layer.addTo(schoolPoly);
+              marker.parentLayer = schoolPoint;
+              layer.parentLayer = schoolPoly;
+              markers.push(marker);
+              markers.push(layer);
             }
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
             marker.bindTooltip(tags.name);
+
+            if (tags.start_date) {
+              // Timeline functionality
+              var dt = new Date(tags.start_date);
+              if (dt == "Invalid Date") {
+                var matches = tags.start_date.match(/\d{4}/);
+                if (matches) {
+                  dt = new Date(tags.start_date.match(/\d{4}/)[0]);
+                }
+              }
+              if (dt != "Invalid Date") {
+                dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
+                marker.dt = dt;
+                layer.dt = dt;
+              }
+            }
           }
 
           L.geoJSON(geoJSON, {
