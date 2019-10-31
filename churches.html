@@ -376,20 +376,20 @@
               console.error("Don't know how to handle", feature);
               return;
             }
-            if (tags.amenity == "townhall") {
-              var color = "hotpink";
-              var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
-              layer.addTo(municipalPoly);
-              marker.parentLayer = municipalPoint;
-              layer.parentLayer = municipalPoly;
-              markers.push(marker);
-              markers.push(layer);
-            } else if (tags.amenity == "school") {
+            if (tags.amenity == "school") {
               var color = "blue";
               var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(schoolPoint);
               layer.addTo(schoolPoly);
               marker.parentLayer = schoolPoint;
               layer.parentLayer = schoolPoly;
+              markers.push(marker);
+              markers.push(layer);
+            } else {
+              var color = "hotpink";
+              var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
+              layer.addTo(municipalPoly);
+              marker.parentLayer = municipalPoint;
+              layer.parentLayer = municipalPoly;
               markers.push(marker);
               markers.push(layer);
             }
