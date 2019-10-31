@@ -160,3 +160,32 @@ input:hover:after {
 input[type="radio"]:hover:after {
   border-radius: 50%;
 }
+
+
+#timeline {
+  width: 100%;
+  height: 15%;
+  margin:0;
+  padding:0;
+}
+.vis-custom-time {
+  z-index: 10000;
+}
+.vis-custom-time div::before {
+  content: "";
+  background: black;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, white, blue 40%, black);
+  left: -2px;
+  display: block;
+  position: relative;
+  width: 25px;
+  height: 25px;
+}
+
+#timeline #buttons {
+  position: absolute;
+  right: 20px;
+  bottom: 12%;
+  z-index: 20000;
+}

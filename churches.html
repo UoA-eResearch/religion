@@ -14,6 +14,10 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
     <script src="https://unpkg.com/leaflet-svg-shape-markers@1.0.0/dist/leaflet-svg-shape-markers.min.js"></script>
     <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
+    <script src="https://unpkg.com/vis@4.21.0/dist/vis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css"/>
     <link rel="stylesheet" href="style.css"/>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77710107-11"></script>
@@ -27,13 +31,93 @@
   </head>
   <body>
     <h1 id="title">Global Worship Map</h1>
-    <div id="map"></div>
+    <div id="map" style="height:85%"></div>
+    <div id="timeline" style="height:15%">
+        <div id="buttons">
+            <button type="button" class="btn" id="play"><i class="fas fa-play"></i></button>
+            <button type="button" onclick="timeline.zoomIn(1)" class="btn" id="zoomIn"><i class="fas fa-search-plus"></i></button>
+            <button type="button" onclick="timeline.zoomOut(1)" class="btn" id="zoomOut"><i class="fas fa-search-minus"></i></button>
+        </div>
+    </div>
     <script>
       var map = L.map('map', {
         worldCopyJump: true,
         zoomControl: false // Zoom added layer for ordering
       }).setView([-36.8862,174.7651], 12);
       var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
+
+      // DOM element where the Timeline will be attached
+      var container = document.getElementById('timeline');
+
+      // Create a DataSet (allows two way data-binding)
+      var dataset = new vis.DataSet([]);
+
+      // Configuration for the Timeline
+      var options = {
+          min: "1000",
+          max: "2100",
+          type: 'point',
+          width: "100%",
+          maxHeight: "100%",
+          zoomable: true,
+          zoomMin: 1000 * 60 * 60 * 24 * 7,
+      }
+
+      // Create a Timeline
+      var timeline = new vis.Timeline(container, dataset, options);
+      timeline.setWindow("1800", "2100");
+
+      timeline.addCustomTime(new Date(), 1);
+
+      function update() {
+          var t = timeline.getCustomTime(1);
+          for (var i in markers) {
+              var marker = markers[i];
+              if (marker.dt) {
+                if (marker.dt > t) {
+                  marker.removeFrom(powPoint);
+                } else {
+                  marker.addTo(powPoint);
+                }
+              } else {
+                // No date defined for marker
+                if (t > new Date("2019-01-01")) {
+                  marker.addTo(powPoint);
+                } else {
+                  marker.removeFrom(powPoint);
+                }
+              }
+          }
+      }
+
+      timeline.on('timechanged', function(e) {
+          console.log(e);
+          update();
+      });
+
+      var playing = false;
+      var playInterval = setInterval(function() {
+          if (playing) {
+              var bounds = timeline.getItemRange();
+              var ct = timeline.getCustomTime(1);
+              var newTime = moment(ct).add(1, "year");
+              if (newTime < new Date(bounds.start) || newTime > new Date(bounds.end)) {
+                  newTime = bounds.start;
+              }
+              timeline.setCustomTime(newTime, 1);
+              update();
+          }
+      }, 500);
+
+      $("#play").click(function() {
+          console.log("play");
+          playing = !playing;
+          if (playing) {
+              $("#play i").attr("class", "fas fa-pause");   
+          } else {
+              $("#play i").attr("class", "fas fa-play");
+          }
+      });
 
       var colors = {
         christian: "red",
@@ -43,6 +127,8 @@
         jewish: "purple",
         unknown: "black"
       }
+
+      var markers = []
 
       var placesOfWorship = L.layerGroup().addTo(map);
       var municipal = L.layerGroup().addTo(map);
@@ -145,6 +231,7 @@
             layer.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
+            layer.bindTooltip(tags.name);
             var latlng;
             if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
@@ -167,7 +254,24 @@
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
+            marker.bindTooltip(tags.name);
+            markers.push(marker);
             layer.addTo(powPoly);
+
+            if (tags.start_date) {
+              // Timeline functionality
+              var dt = new Date(tags.start_date);
+              if (dt == "Invalid Date") {
+                var matches = tags.start_date.match(/\d{4}/);
+                if (matches) {
+                  dt = new Date(tags.start_date.match(/\d{4}/)[0]);
+                }
+              }
+              if (dt != "Invalid Date") {
+                dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
+                marker.dt = dt;
+              }
+            }
           }
 
           L.geoJSON(geoJSON, {
@@ -210,10 +314,11 @@
           console.log(geoJSON);
           function onEachFeature(feature, layer) {
             var tags = feature.properties.tags;
-            var outString = "<b>" + tags.name + "</b><div class='pano'></div>";
+            var outString = "<b>" + tags.name + "</b><div>Established: " + tags.start_date + "</div><div class='pano'></div>";
             layer.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
+            layer.bindTooltip(tags.name);
             var latlng;
             if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
               var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
@@ -239,6 +344,7 @@
             marker.bindPopup(outString, {
               maxWidth: "auto"
             }).on('popupopen', popupHandler);
+            marker.bindTooltip(tags.name);
           }
 
           L.geoJSON(geoJSON, {
