@@ -61,6 +61,7 @@
           maxHeight: "100%",
           zoomable: true,
           zoomMin: 1000 * 60 * 60 * 24 * 7,
+          //stack: false
       }
 
       // Create a Timeline
@@ -273,12 +274,17 @@
 
             if (tags.start_date) {
               // Timeline functionality
-              var dt = new Date(tags.start_date);
+              var dateStr = tags.start_date;
+              var dt = new Date(dateStr);
               if (dt == "Invalid Date") {
-                var matches = tags.start_date.match(/\d{4}/);
+                var matches = dateStr.match(/\d{4}/);
                 if (matches) {
-                  dt = new Date(tags.start_date.match(/\d{4}/)[0]);
+                  dateStr = matches[0];
+                  dt = new Date(dateStr);
                 }
+              }
+              if (dateStr.length == 4) {
+                dt.setDate(Math.random() * 365);
               }
               if (dt != "Invalid Date") {
                 dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
@@ -371,12 +377,17 @@
 
             if (tags.start_date) {
               // Timeline functionality
-              var dt = new Date(tags.start_date);
+              var dateStr = tags.start_date;
+              var dt = new Date(dateStr);
               if (dt == "Invalid Date") {
-                var matches = tags.start_date.match(/\d{4}/);
+                var matches = dateStr.match(/\d{4}/);
                 if (matches) {
-                  dt = new Date(tags.start_date.match(/\d{4}/)[0]);
+                  dateStr = matches[0];
+                  dt = new Date(dateStr);
                 }
+              }
+              if (dateStr.length == 4) {
+                dt.setDate(Math.random() * 365);
               }
               if (dt != "Invalid Date") {
                 dataset.add({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date});
