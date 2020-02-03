@@ -201,10 +201,17 @@
                         var marker = L.marker(latlng);
                         if (geoJsonPoint.properties.isOrigin) {
                             marker.bindTooltip(geoJsonPoint.properties.origin_name);
-                            var icon = L.divIcon({
-                                className: "flag-icon flag-icon-" + isoA2,
-                                iconSize: iconSize
-                            });
+                            if (geoJsonPoint.properties.origin_name == "Zanzibar") {
+                                var icon = L.icon({
+                                    iconUrl: "Flag_of_Zanzibar.svg",
+                                    iconSize: iconSize
+                                })
+                            } else {
+                                var icon = L.divIcon({
+                                    className: "flag-icon flag-icon-" + isoA2,
+                                    iconSize: iconSize
+                                });
+                            }
                             marker.setIcon(icon);
                         } else {
                             marker.bindTooltip(geoJsonPoint.properties.destination_name);
