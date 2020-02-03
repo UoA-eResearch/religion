@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Al Noor mosque attendees origin countries</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.3.7/papaparse.min.js"></script>
+    <!-- load animation tweening lib requirement for CanvasFlowMapLayer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script>
+    <script src="https://jwasilgeo.github.io/Leaflet.Canvas-Flowmap-Layer/src/CanvasFlowmapLayer.js"></script>
+    <style>
+        body,
+        html,
+        #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #title {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            z-index: 1000;
+            width: 500px;
+            text-align: center;
+            color: white;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+            text-shadow: 2px 2px #000000;
+            font-weight: normal;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1 id="title">Al Noor mosque attendees origin countries</h1>
+    <div id="map"></div>
+    <script>
+        
+        var map = L.map('map', {
+            center: [0, -148],
+            zoom: 2,
+            worldCopyJump: true
+        });
+
+        var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
+
+        var flowmap = L.layerGroup().addTo(map);
+
+        var baseMaps = {
+            "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
+            "OSM Grayscale": L.tileLayer.provider("OpenStreetMap.BlackAndWhite"),
+            "CartoDB Positron": positron,
+            "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
+            "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
+            "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+            }),
+            "Wikimedia": L.tileLayer.provider("Wikimedia")
+        }
+
+        L.control.layers(baseMaps).addTo(map);
+
+        var al_noor = [-43.532944, 172.611722]
+
+        Papa.parse("countries.csv", {
+            download: true,
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                console.log(results);
+                var features = [];
+                for (var i in results.data) {
+                    var datum = results.data[i];
+                    features.push({
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [datum.longitude, datum.latitude]
+                        },
+                        properties: {
+                            origin_name: datum.location,
+                            origin_lat: datum.latitude,
+                            origin_lon: datum.longitude,
+                            destination_name: "Al Noor mosque",
+                            destination_lat: al_noor[0],
+                            destination_lon: al_noor[1]
+                        }
+                    })
+                }
+                var geoJsonFeatureCollection = {
+                    type: 'FeatureCollection',
+                    features: features
+                };
+
+                var layer = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
+                    originAndDestinationFieldIds: {
+                        originUniqueIdField: 'origin_name',
+                        originGeometry: {
+                            x: 'origin_lon',
+                            y: 'origin_lat'
+                        },
+                        destinationUniqueIdField: 'destination_name',
+                        destinationGeometry: {
+                            x: 'destination_lon',
+                            y: 'destination_lat'
+                        }
+                    },
+                    pathDisplayMode: 'all',
+                    animationStarted: true,
+                    animationEasingFamily: 'Linear',
+                    animationEasingType: 'None',
+                    animationDuration: 2000,
+                    canvasBezierStyle: {
+                        type: 'simple',
+                        symbol: {
+                        // use canvas styling options (compare to CircleMarker styling below)
+                        strokeStyle: 'blue',
+                        lineWidth: 0.75,
+                        lineCap: 'round',
+                        shadowColor: 'blue',
+                        shadowBlur: 1.5
+                        }
+                    },
+
+                    animatedCanvasBezierStyle: {
+                        type: 'simple',
+                        symbol: {
+                        // use canvas styling options (compare to CircleMarker styling below)
+                        strokeStyle: 'blue',
+                        lineWidth: 1.25,
+                        lineDashOffsetSize: 4, // custom property used with animation sprite sizes
+                        lineCap: 'round',
+                        shadowColor: 'blue',
+                        shadowBlur: 2
+                        }
+                    },
+                    style: function (geoJsonFeature) {
+                        // use leaflet's path styling options
+
+                        // since the GeoJSON feature properties are modified by the layer,
+                        // developers can rely on the "isOrigin" property to set different
+                        // symbols for origin vs destination CircleMarker stylings
+
+                        if (geoJsonFeature.properties.isOrigin) {
+                            return {
+                                radius: 10,
+                                weight: 1,
+                                color: 'blue',
+                                fillColor: 'blue',
+                                fillOpacity: 0.6
+                            };
+                        } else {
+                            return {
+                                radius: 5,
+                                weight: 0.25,
+                                color: 'green',
+                                fillColor: 'green',
+                                fillOpacity: 0.7
+                            };
+                        }
+                    },
+                    pointToLayer: function (geoJsonPoint, latlng) {
+                        var marker = L.circleMarker(latlng);
+                        if (geoJsonPoint.properties.isOrigin) {
+                            marker.bindTooltip(geoJsonPoint.properties.origin_name);
+                        } else {
+                            marker.bindTooltip(geoJsonPoint.properties.destination_name);
+                        }
+                        return marker;
+                    },
+                }).addTo(map);
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
