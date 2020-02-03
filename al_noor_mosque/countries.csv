@@ -1,47 +1,47 @@
-location,latitude,longitude,status
-Bosnia and Herzegovina,44.091039,18.06843,success
-Turkey,39.339547,34.51052,success
-United Kingdom,52.418788,-1.247349,success
-Ireland,53.078731,-7.798618,success
-Jamaica,18.137123,-77.318767,success
-Morocco,31.649504,-7.189711,success
-Algeria,27.89689,3.379277,success
-Tunisia,33.687264,9.007775,success
-Libya,26.666955,18.030248,success
-Egypt,26.42231,29.227089,success
-Iraq,32.765286,43.614805,success
-Palestine,32.052183,35.252175,doubt
-Jordan,30.802278,36.391378,doubt
-Saudi Arabia,23.806678,44.700847,success
-Syria,35.008917,38.290599,success
-Lebanon,34.095838,35.95658,doubt
-Oman,22.113184,57.345652,success
-Nigeria,9.404974,7.607418,success
-Niger,17.431408,9.521564,success
-South Africa,-29.708985,23.666291,success
-Kenya,0.543716,37.918308,success
-Tanzania,-5.869032,34.800732,success
-Zanzibar,-6.16394,39.19793,success
-Mauritius,-20.321973,57.534935,success
-Somalia,3.568925,45.19238,success
-Ethiopia,7.996115,38.896778,success
-Eritrea,15.817362,38.267404,success
-Sudan,16.34997,29.381307,success
-Russia,63.314401,93.884016,success
-Afghanistan,34.159326,66.51551,success
-Pakistan,29.328493,68.546268,success
-Uzbekistan,41.726948,63.960684,success
-India,22.412321,79.132924,success
-Bangladesh,24.045958,90.032723,success
-Sri Lanka,7.622919,80.68822,success
-Maldives,-0.614771,73.093739,success
-China,32.523743,106.431983,success
-Myanmar,21.576814,96.06596,success
-Thailand,15.512883,101.301707,success
-Philippines,16.932122,121.387948,success
-Malaysia,2.521947,113.833569,success
-Singapore,1.357685,103.80938,success
-Indonesia,-1.003189,101.972332,success
-Brunei,4.479716,114.578687,success
-Fiji,-17.834016,177.972004,success
-New Zealand,-45.175323,169.232531,success
+location,latitude,longitude,status,isoA2
+Afghanistan,34.159326,66.51551,success,AF
+Algeria,27.89689,3.379277,success,DZ
+Bangladesh,24.045958,90.032723,success,BD
+Bosnia and Herzegovina,44.091039,18.06843,success,BA
+Brunei,4.479716,114.578687,success,BN
+China,32.523743,106.431983,success,CN
+Egypt,26.42231,29.227089,success,EG
+Eritrea,15.817362,38.267404,success,ER
+Ethiopia,7.996115,38.896778,success,ET
+Fiji,-17.834016,177.972004,success,FJ
+India,22.412321,79.132924,success,IN
+Indonesia,-1.003189,101.972332,success,ID
+Iraq,32.765286,43.614805,success,IQ
+Ireland,53.078731,-7.798618,success,IE
+Jamaica,18.137123,-77.318767,success,JM
+Jordan,30.802278,36.391378,doubt,JO
+Kenya,0.543716,37.918308,success,KE
+Lebanon,34.095838,35.95658,doubt,LB
+Libya,26.666955,18.030248,success,LY
+Malaysia,2.521947,113.833569,success,MY
+Maldives,-0.614771,73.093739,success,MV
+Mauritius,-20.321973,57.534935,success,MU
+Morocco,31.649504,-7.189711,success,MA
+Myanmar,21.576814,96.06596,success,MM
+New Zealand,-45.175323,169.232531,success,NZ
+Niger,17.431408,9.521564,success,NE
+Nigeria,9.404974,7.607418,success,NG
+Oman,22.113184,57.345652,success,OM
+Pakistan,29.328493,68.546268,success,PK
+Palestine,32.052183,35.252175,doubt,PS
+Philippines,16.932122,121.387948,success,PH
+Russia,63.314401,93.884016,success,RU
+Saudi Arabia,23.806678,44.700847,success,SA
+Singapore,1.357685,103.80938,success,SG
+Somalia,3.568925,45.19238,success,SO
+South Africa,-29.708985,23.666291,success,ZA
+Sri Lanka,7.622919,80.68822,success,LK
+Sudan,16.34997,29.381307,success,SD
+Syria,35.008917,38.290599,success,SY
+Tanzania,-5.869032,34.800732,success,TZ
+Thailand,15.512883,101.301707,success,TH
+Tunisia,33.687264,9.007775,success,TN
+Turkey,39.339547,34.51052,success,TR
+United Kingdom,52.418788,-1.247349,success,GB
+Uzbekistan,41.726948,63.960684,success,UZ
+Zanzibar,-6.16394,39.19793,success,TZ

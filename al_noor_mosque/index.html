@@ -21,6 +21,7 @@
     <!-- load animation tweening lib requirement for CanvasFlowMapLayer -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script>
     <script src="https://jwasilgeo.github.io/Leaflet.Canvas-Flowmap-Layer/src/CanvasFlowmapLayer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/css/flag-icon.min.css" integrity="sha256-NkXMfPcpoih3/xWDcrJcAX78pHpfwxkhNj0bAf8AMTs=" crossorigin="anonymous" />
     <style>
         body,
         html,
@@ -49,6 +50,10 @@
             text-shadow: 2px 2px #000000;
             font-weight: normal;
         }
+
+        .flag-icon {
+            position: absolute;
+        }
     </style>
 
 </head>
@@ -59,20 +64,20 @@
     <script>
         
         var map = L.map('map', {
-            center: [0, -148],
-            zoom: 2,
+            center: [15, 41],
+            zoom: 3,
             worldCopyJump: true
         });
 
-        var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
+        var basemap = L.tileLayer.provider("CartoDB.DarkMatter").addTo(map);
 
         var flowmap = L.layerGroup().addTo(map);
 
         var baseMaps = {
             "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
             "OSM Grayscale": L.tileLayer.provider("OpenStreetMap.BlackAndWhite"),
-            "CartoDB Positron": positron,
-            "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
+            "CartoDB Positron": L.tileLayer.provider('CartoDB.Positron'),
+            "CartoDB Dark Matter": basemap,
             "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
             "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
                 maxZoom: 20,
@@ -94,6 +99,10 @@
                 var features = [];
                 for (var i in results.data) {
                     var datum = results.data[i];
+                    if (!datum.location) {
+                        console.warn(datum);
+                        continue;
+                    }
                     features.push({
                         type: 'Feature',
                         geometry: {
@@ -104,6 +113,7 @@
                             origin_name: datum.location,
                             origin_lat: datum.latitude,
                             origin_lon: datum.longitude,
+                            isoA2: datum.isoA2,
                             destination_name: "Al Noor mosque",
                             destination_lat: al_noor[0],
                             destination_lon: al_noor[1]
@@ -114,6 +124,7 @@
                     type: 'FeatureCollection',
                     features: features
                 };
+                console.log(geoJsonFeatureCollection)
 
                 var layer = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
                     originAndDestinationFieldIds: {
@@ -183,11 +194,25 @@
                         }
                     },
                     pointToLayer: function (geoJsonPoint, latlng) {
-                        var marker = L.circleMarker(latlng);
+                        if (geoJsonPoint.properties.isoA2) {
+                            var isoA2 = geoJsonPoint.properties.isoA2.toLowerCase()
+                        }
+                        var iconSize = [20, 20];
+                        var marker = L.marker(latlng);
                         if (geoJsonPoint.properties.isOrigin) {
                             marker.bindTooltip(geoJsonPoint.properties.origin_name);
+                            var icon = L.divIcon({
+                                className: "flag-icon flag-icon-" + isoA2,
+                                iconSize: iconSize
+                            });
+                            marker.setIcon(icon);
                         } else {
                             marker.bindTooltip(geoJsonPoint.properties.destination_name);
+                            var icon = L.icon({
+                                iconUrl: "al_noor_mosque.jpg",
+                                iconSize: iconSize
+                            })
+                            marker.setIcon(icon);
                         }
                         return marker;
                     },
