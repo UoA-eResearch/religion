@@ -51,8 +51,13 @@
             font-weight: normal;
         }
 
-        .flag-icon {
-            position: absolute;
+        .flag-icon-background {
+            background-color: black;
+            background-size: 20px 15px;
+        }
+
+        .flag-icon-zanzibar {
+            background-image: url("Flag_of_Zanzibar.svg");
         }
     </style>
 
@@ -69,15 +74,13 @@
             worldCopyJump: true
         });
 
-        var basemap = L.tileLayer.provider("CartoDB.DarkMatter").addTo(map);
-
         var flowmap = L.layerGroup().addTo(map);
 
         var baseMaps = {
             "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
-            "OSM Grayscale": L.tileLayer.provider("OpenStreetMap.BlackAndWhite"),
+            "OSM Grayscale": L.tileLayer.provider("OpenStreetMap.BlackAndWhite").addTo(map),
             "CartoDB Positron": L.tileLayer.provider('CartoDB.Positron'),
-            "CartoDB Dark Matter": basemap,
+            "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
             "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
             "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
                 maxZoom: 20,
@@ -197,21 +200,14 @@
                         if (geoJsonPoint.properties.isoA2) {
                             var isoA2 = geoJsonPoint.properties.isoA2.toLowerCase()
                         }
-                        var iconSize = [20, 20];
+                        var iconSize = [22, 17];
                         var marker = L.marker(latlng);
                         if (geoJsonPoint.properties.isOrigin) {
                             marker.bindTooltip(geoJsonPoint.properties.origin_name);
-                            if (geoJsonPoint.properties.origin_name == "Zanzibar") {
-                                var icon = L.icon({
-                                    iconUrl: "Flag_of_Zanzibar.svg",
-                                    iconSize: iconSize
-                                })
-                            } else {
-                                var icon = L.divIcon({
-                                    className: "flag-icon flag-icon-" + isoA2,
-                                    iconSize: iconSize
-                                });
-                            }
+                            var icon = L.divIcon({
+                                className: "flag-icon-background flag-icon-" + isoA2,
+                                iconSize: iconSize
+                            });
                             marker.setIcon(icon);
                         } else {
                             marker.bindTooltip(geoJsonPoint.properties.destination_name);
