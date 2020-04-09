@@ -59,6 +59,9 @@
 
       function formatData(name, data) {
         var header = "<h2>" + name + "</h2>"
+        if (data[2006]["Total stated"] == null && data[2013]["Total stated"] == null && data[2018]["Total stated"] == null) {
+          return header + "No data";
+        }
         table = "<table><thead><th></th><th>2006</th><th>2013</th><th>2018</th></thead><tbody>";
         for (var religion in data[2006]) {
           if (religion.includes("Total")) continue;
