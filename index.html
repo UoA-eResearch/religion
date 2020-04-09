@@ -44,14 +44,10 @@
       }
       
       function getPctForReligion(religion, yearData) {
-        if (yearData.Total_people_stated == null) {
+        if (yearData["Total stated"] == null) {
           return "No data";
         }
-        if (religion == "Christian") {
-          return round((yearData.Christian + yearData.Maori_Christian) / yearData.Total_people_stated * 100, 1) + "%";
-        } else {
-          return round(yearData[religion] / yearData.Total_people_stated * 100, 1) + "%";
-        }
+        return round(yearData[religion] / yearData["Total stated"] * 100, 1) + "%";
       }
       
       function handleNull(string) {
@@ -61,63 +57,69 @@
         return string;
       }
 
-      function formatData(data) {
-        var header = "<h2>" + data.desc + "</h2>"
-        if (data[2001].Total_people_stated == null && data[2006].Total_people_stated == null && data[2013].Total_people_stated == null) {
-          return header + "No data";
+      function formatData(name, data) {
+        var header = "<h2>" + name + "</h2>"
+        table = "<table><thead><th></th><th>2006</th><th>2013</th><th>2018</th></thead><tbody>";
+        for (var religion in data[2006]) {
+          if (religion.includes("Total")) continue;
+          tr = "<tr><td>" + religion + "</td>";
+          for (year in data) {
+            tr += "<td>" + getPctForReligion(religion, data[year]) + "</td>";
+          }
+          tr += "</tr>"
+          table += tr;
         }
-        return header + "<table><thead><th></th><th>2001</th><th>2006</th><th>2013</th></thead><tbody>" +
-          "<tr><td>Buddhist</td><td>" + getPctForReligion("Buddhist", data[2001]) + "</td><td>" + getPctForReligion("Buddhist", data[2006]) + "</td><td>" + getPctForReligion("Buddhist", data[2013]) + "</td></tr>" +
-          "<tr><td>Christian</td><td>" + getPctForReligion("Christian", data[2001]) + "</td><td>" + getPctForReligion("Christian", data[2006]) + "</td><td>" + getPctForReligion("Christian", data[2013]) + "</td></tr>" +
-          "<tr><td>Hindu</td><td>" + getPctForReligion("Hindu", data[2001]) + "</td><td>" + getPctForReligion("Hindu", data[2006]) + "</td><td>" + getPctForReligion("Hindu", data[2013]) + "</td></tr>" +
-          "<tr><td>Jewish</td><td>" + getPctForReligion("Judaism/_Jewish", data[2001]) + "</td><td>" + getPctForReligion("Judaism/_Jewish", data[2006]) + "</td><td>" + getPctForReligion("Judaism/_Jewish", data[2013]) + "</td></tr>" +
-          "<tr><td>Muslim</td><td>" + getPctForReligion("Islam/Muslim", data[2001]) + "</td><td>" + getPctForReligion("Islam/Muslim", data[2006]) + "</td><td>" + getPctForReligion("Islam/Muslim", data[2013]) + "</td></tr>" +
-          "<tr><td>No Religion</td><td>" + getPctForReligion("No_Religion", data[2001]) + "</td><td>" + getPctForReligion("No_Religion", data[2006]) + "</td><td>" + getPctForReligion("No_Religion", data[2013]) + "</td></tr>" +
-          "<tr><td>New Age</td><td>" + getPctForReligion("Spiritualism_and_New_Age_Religions", data[2001]) + "</td><td>" + getPctForReligion("Spiritualism_and_New_Age_Religions", data[2006]) + "</td><td>" + getPctForReligion("Spiritualism_and_New_Age_Religions", data[2013]) + "</td></tr>" +
-          "<tr><td>Total people stated</td><td>" + handleNull(data[2001].Total_people_stated) + "</td><td>" + handleNull(data[2006].Total_people_stated) + "</td><td>" + handleNull(data[2013].Total_people_stated) + "</td></tr>"
-          + "</tbody></table>";
+        table += "</tbody></table>"
+        return header + table;
       }
       
       $.getJSON("religion.json", function(data) {
         console.log(data);
+        window.data = data;
         function onEachFeature(feature, layer) {
-            var id = feature.properties.AU2013;
-            layer.bindPopup(formatData(data[id]));
+            var id = feature.properties.SA22018_V1_00;
+            var name = feature.properties.SA22018_V1_NAME
+            layer.bindPopup(formatData(name, data[id]));
         }
         
-        var geojsonLayer = new L.GeoJSON.AJAX("au.geojson", {
-          style: function(feature) {
-              var id = feature.properties.AU2013;
-              var auData = data[id];
-              var noReligion01Pct = auData[2001]["No_Religion"] / auData[2001].Total_people_stated * 100;
-              var noReligion13Pct = auData[2013]["No_Religion"] / auData[2013].Total_people_stated * 100;
-              var diff = noReligion13Pct - noReligion01Pct;
-              var color = "gray";
-              if (diff < -1) {
-                color = "purple";
-              } else if (diff > 1) {
-                color = "pink";
-              }
-              return {
-                fillColor: color,
-                fillOpacity: .7,
-                weight: 1,
-                color: "black",
-              };
-          },
-          onEachFeature: onEachFeature
-        }).addTo(map);
+        $.getJSON("sa2.geojson", function(geojson) {
+          var geojsonLayer = new L.GeoJSON(geojson, {
+            style: function(feature) {
+                var id = feature.properties.SA22018_V1_00;
+                var saData = data[id];
+                var diff = 0;
+                if (saData[2006]["Total stated"] && saData[2018]["Total stated"]) {
+                  var noReligion06Pct = saData[2006]["No religion"] / saData[2006]["Total stated"] * 100;
+                  var noReligion18Pct = saData[2018]["No religion"] / saData[2018]["Total stated"] * 100;
+                  diff = noReligion18Pct - noReligion06Pct;
+                }
+                var color = "gray";
+                if (diff < -1) {
+                  color = "purple";
+                } else if (diff > 1) {
+                  color = "pink";
+                }
+                return {
+                  fillColor: color,
+                  fillOpacity: .7,
+                  weight: 1,
+                  color: "black",
+                };
+            },
+            onEachFeature: onEachFeature
+          }).addTo(map);
+        });
       });
 
       var legend = L.control({position: 'topleft'});
 
       legend.onAdd = function (map) {
           var div = L.DomUtil.create('div', 'info legend');
-          div.innerHTML += "<h4>Change in persons reporting religious affiliation between the 2001 and 2013 census</h4>";
+          div.innerHTML += "<h4>Change in persons reporting religious affiliation between the 2006 and 2018 census</h4>";
           div.innerHTML += '<i style="background:purple"></i> Up 1% or more<br>';
           div.innerHTML += '<i style="background:gray"></i> Between -1% to 1%<br>';
           div.innerHTML += '<i style="background:pink"></i> Down 1% or more<br>';
-          div.innerHTML += '<div class="legend-source">Source: <a href="http://www.stats.govt.nz/Census/2013-census/data-tables/meshblock-dataset.aspx" target="_blank">Statistics NZ</a></div>'
+          div.innerHTML += '<div class="legend-source">Source: <a href="https://www.stats.govt.nz/tools/2018-census-place-summaries/" target="_blank">Statistics NZ</a></div>'
 
           return div;
       };
