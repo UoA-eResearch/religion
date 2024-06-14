@@ -41,7 +41,7 @@ def get_centroid(feature):
         except Exception as e:
             print(e, feature)
 
-for dataset in [churches]:#, schools, townhalls]:
+for dataset in [churches, schools, townhalls]:
     for feature in tqdm(dataset["features"]):
         centroid = get_centroid(feature)
         if centroid:
