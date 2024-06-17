@@ -1,556 +1,566 @@
 <html>
-  <head>
-    <title>Global Places of Worship Map (with Town Halls & Schools)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" integrity="sha256-iYUgmrapfDGvBrePJPrMWQZDcObdAcStKBpjP3Az+3s=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js" integrity="sha256-CNm+7c26DTTCGRQkM9vp7aP85kHFMqs9MhPEuytF+fQ=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-overpass-layer@2.8.3/src/OverPassLayer.css" />
-    <script src="https://unpkg.com/leaflet-overpass-layer@2.8.3/dist/OverPassLayer.bundle.js"></script>
-    <script src="https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
-    <script src="https://unpkg.com/leaflet-spin@1.1.0/leaflet.spin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@latest/assets/css/leaflet.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
-    <script src="https://unpkg.com/leaflet-svg-shape-markers@1.0.0/dist/leaflet-svg-shape-markers.min.js"></script>
-    <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
-    <script src="https://unpkg.com/vis@4.21.0/dist/vis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css"/>
-    <link rel="stylesheet" href="style.css"/>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77710107-11"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
 
-      gtag('config', 'UA-77710107-11');
-    </script>
-  </head>
-  <body>
-    <h1 id="title">Global Places of Worship Map (with Town Halls & Schools)</h1>
-    <div id="map" style="height:85%"></div>
-    <div id="timeline" style="height:15%">
-        <div id="buttons">
-            <button type="button" class="btn" id="play"><i class="fas fa-play"></i></button>
-            <button type="button" onclick="timeline.zoomIn(1)" class="btn" id="zoomIn"><i class="fas fa-search-plus"></i></button>
-            <button type="button" onclick="timeline.zoomOut(1)" class="btn" id="zoomOut"><i class="fas fa-search-minus"></i></button>
-        </div>
+<head>
+  <title>Global Places of Worship Map (with Town Halls & Schools)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css"
+    integrity="sha256-iYUgmrapfDGvBrePJPrMWQZDcObdAcStKBpjP3Az+3s=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"
+    integrity="sha256-CNm+7c26DTTCGRQkM9vp7aP85kHFMqs9MhPEuytF+fQ=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet.glify@3.1.0/dist/glify-browser.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-overpass-layer@2.8.3/src/OverPassLayer.css" />
+  <script src="https://unpkg.com/leaflet-overpass-layer@2.8.3/dist/OverPassLayer.bundle.js"></script>
+  <script src="https://unpkg.com/osmtogeojson@2.2.12/osmtogeojson.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+  <script src="https://unpkg.com/leaflet-spin@1.1.0/leaflet.spin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@latest/assets/css/leaflet.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
+  <script src="https://unpkg.com/leaflet-svg-shape-markers@1.0.0/dist/leaflet-svg-shape-markers.min.js"></script>
+  <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
+  <script src="https://unpkg.com/vis@4.21.0/dist/vis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77710107-11"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-77710107-11');
+  </script>
+</head>
+
+<body>
+  <h1 id="title">Global Places of Worship Map (with Town Halls & Schools)</h1>
+  <div id="map" style="height:85%"></div>
+  <div id="timeline" style="height:15%">
+    <div id="buttons">
+      <button type="button" class="btn" id="play"><i class="fas fa-play"></i></button>
+      <button type="button" onclick="timeline.zoomIn(1)" class="btn" id="zoomIn"><i
+          class="fas fa-search-plus"></i></button>
+      <button type="button" onclick="timeline.zoomOut(1)" class="btn" id="zoomOut"><i
+          class="fas fa-search-minus"></i></button>
     </div>
-    <script>
-      var map = L.map('map', {
-        worldCopyJump: true,
-        zoomControl: false // Zoom added layer for ordering
-      }).setView([-36.8862,174.7651], 12);
-      var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
+  </div>
+  <script>
+    var map = L.map('map', {
+      worldCopyJump: true,
+      zoomControl: false // Zoom added layer for ordering
+    }).setView([-36.8862, 174.7651], 12);
+    var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
 
-      // DOM element where the Timeline will be attached
-      var container = document.getElementById('timeline');
+    // DOM element where the Timeline will be attached
+    var container = document.getElementById('timeline');
 
-      // Create a DataSet (allows two way data-binding)
-      var dataset = new vis.DataSet([]);
+    // Create a DataSet (allows two way data-binding)
+    var dataset = new vis.DataSet([]);
 
-      // Configuration for the Timeline
-      var options = {
-          min: "0000",
-          max: "2100",
-          format: {
-            minorLabels: {
-              //year: "YYYY [AD]"
-            }
-          },
-          type: 'point',
-          width: "100%",
-          maxHeight: "100%",
-          zoomable: true,
-          zoomMin: 1000 * 60 * 60 * 24 * 7,
-          //stack: false
+    // Configuration for the Timeline
+    var options = {
+      min: "0000",
+      max: "2100",
+      format: {
+        minorLabels: {
+          //year: "YYYY [AD]"
+        }
+      },
+      type: 'point',
+      width: "100%",
+      maxHeight: "100%",
+      zoomable: true,
+      zoomMin: 1000 * 60 * 60 * 24 * 7,
+      //stack: false
+    }
+
+    // Create a Timeline
+    var timeline = new vis.Timeline(container, dataset, options);
+    timeline.setWindow("1800", "2050");
+
+    timeline.on('select', function (properties) {
+      var selected = properties.items[0];
+      for (var i in markers) {
+        var marker = markers[i];
+        if (marker.id == selected) {
+          console.log(marker);
+          marker.openPopup();
+        }
       }
+    });
 
-      // Create a Timeline
-      var timeline = new vis.Timeline(container, dataset, options);
-      timeline.setWindow("1800", "2050");
+    timeline.addCustomTime(new Date(), 1);
 
-      timeline.on('select', function (properties) {
-        var selected = properties.items[0];
-        for (var i in markers) {
-          var marker = markers[i];
-          if (marker.id == selected) {
-            console.log(marker);
-            marker.openPopup();
+    function update() {
+      var t = timeline.getCustomTime(1);
+      for (var i in markers) {
+        var marker = markers[i];
+        if (marker.dt) {
+          if (marker.dt > t) {
+            marker.removeFrom(marker.parentLayer);
+          } else {
+            marker.addTo(marker.parentLayer);
+          }
+        } else {
+          // No date defined for marker
+          if (t > new Date("2019-01-01")) {
+            marker.addTo(marker.parentLayer);
+          } else {
+            marker.removeFrom(marker.parentLayer);
           }
         }
-      });
-
-      timeline.addCustomTime(new Date(), 1);
-
-      function update() {
-          var t = timeline.getCustomTime(1);
-          for (var i in markers) {
-              var marker = markers[i];
-              if (marker.dt) {
-                if (marker.dt > t) {
-                  marker.removeFrom(marker.parentLayer);
-                } else {
-                  marker.addTo(marker.parentLayer);
-                }
-              } else {
-                // No date defined for marker
-                if (t > new Date("2019-01-01")) {
-                  marker.addTo(marker.parentLayer);
-                } else {
-                  marker.removeFrom(marker.parentLayer);
-                }
-              }
-          }
-          updateStats();
       }
+      updateStats();
+    }
 
-      timeline.on('timechanged', function(e) {
-          console.log(e);
-          update();
-      });
+    timeline.on('timechanged', function (e) {
+      console.log(e);
+      update();
+    });
 
-      var playing = false;
-      var playInterval = setInterval(function() {
-          if (playing) {
-              var min = dataset.min("start").start;
-              var max = dataset.max("start").start;
-              var ct = timeline.getCustomTime(1);
-              var newTime = moment(ct).add(1, "year");
-              if (newTime < min || newTime > max) {
-                  newTime = min;
-              }
-              timeline.setCustomTime(newTime, 1);
-              update();
-          }
-      }, 500);
-
-      $("#play").click(function() {
-          console.log("play");
-          playing = !playing;
-          if (playing) {
-              $("#play i").attr("class", "fas fa-pause");   
-          } else {
-              $("#play i").attr("class", "fas fa-play");
-          }
-      });
-
-      var colors = {
-        christian: "red",
-        muslim: "green",
-        buddhist: "blue",
-        hindu: "orange",
-        jewish: "purple",
-        unknown: "black"
+    var playing = false;
+    var playInterval = setInterval(function () {
+      if (playing) {
+        var min = dataset.min("start").start;
+        var max = dataset.max("start").start;
+        var ct = timeline.getCustomTime(1);
+        var newTime = moment(ct).add(1, "year");
+        if (newTime < min || newTime > max) {
+          newTime = min;
+        }
+        timeline.setCustomTime(newTime, 1);
+        update();
       }
+    }, 500);
 
-      var markers = [];
-      var timelinePoints = [];
-
-      var placesOfWorship = L.layerGroup().addTo(map);
-      var municipal = L.layerGroup()//.addTo(map);
-      var school = L.layerGroup()//.addTo(map);
-
-      var powPoly = L.layerGroup();
-      var powPoint = L.layerGroup().addTo(placesOfWorship);
-
-      var municipalPoly = L.layerGroup();
-      var municipalPoint = L.layerGroup().addTo(municipal);
-
-      var schoolPoly = L.layerGroup();
-      var schoolPoint = L.layerGroup().addTo(school);
-
-      var addedIds = {};
-
-      function popupHandler(popup) {
-        console.log(popup);
-        var panoElem = $(".pano", popup.popup._contentNode)[0];
-        var sv = new google.maps.StreetViewService();
-        sv.getPanorama({location: popup.popup._latlng}, function(data, status) {
-          if (status === 'OK') {
-            var pano = new google.maps.StreetViewPanorama(panoElem, {
-              position: popup.popup._latlng,
-              pov: {
-                heading: 0,
-                pitch: 0
-              },
-              zoom: 1
-            });
-          } else {
-            $(panoElem).text("No streetview for this location");
-          }
-        });
+    $("#play").click(function () {
+      console.log("play");
+      playing = !playing;
+      if (playing) {
+        $("#play i").attr("class", "fas fa-pause");
+      } else {
+        $("#play i").attr("class", "fas fa-play");
       }
+    });
 
-      function capitilize(string) {
-        if (string) {
-          return string.replace(/_/g, " ").replace("catholc", "catholic").replace(/\w\S*/g, function(txt){
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    var colors = {
+      christian: "red",
+      muslim: "green",
+      buddhist: "blue",
+      hindu: "orange",
+      jewish: "purple",
+      unknown: "black"
+    }
+
+    var markers = [];
+    var timelinePoints = [];
+
+    var placesOfWorship = L.layerGroup().addTo(map);
+    var municipal = L.layerGroup()//.addTo(map);
+    var school = L.layerGroup()//.addTo(map);
+
+    var powPoly = L.layerGroup();
+    var powPoint = L.layerGroup().addTo(placesOfWorship);
+
+    var municipalPoly = L.layerGroup();
+    var municipalPoint = L.layerGroup().addTo(municipal);
+
+    var schoolPoly = L.layerGroup();
+    var schoolPoint = L.layerGroup().addTo(school);
+
+    var addedIds = {};
+
+    function popupHandler(popup) {
+      console.log(popup);
+      var panoElem = $(".pano", popup.popup._contentNode)[0];
+      var sv = new google.maps.StreetViewService();
+      sv.getPanorama({ location: popup.popup._latlng }, function (data, status) {
+        if (status === 'OK') {
+          var pano = new google.maps.StreetViewPanorama(panoElem, {
+            position: popup.popup._latlng,
+            pov: {
+              heading: 0,
+              pitch: 0
+            },
+            zoom: 1
           });
+        } else {
+          $(panoElem).text("No streetview for this location");
         }
-      }
+      });
+    }
 
-      function updateStats() {
-        var powCounts = {
-          christian: 0,
-          muslim: 0,
-          buddhist: 0,
-          hindu: 0,
-          jewish: 0,
-          unknown: 0
-        }
-        powPoint.eachLayer(function(layer) {
-          if(map.getBounds().contains(layer.getLatLng())) {
-            if (layer.religion in powCounts) {
-              powCounts[layer.religion]++;
-            } else {
-              powCounts.unknown++;
-            }
-          }
+    function capitilize(string) {
+      if (string) {
+        return string.replace(/_/g, " ").replace("catholc", "catholic").replace(/\w\S*/g, function (txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
-        for (var i in timelinePoints) {
-          var row = timelinePoints[i];
-          if (map.getBounds().contains(row.latlng)) {
-            try {
-              dataset.add(row);
-            } catch {}
+      }
+    }
+
+    function updateStats() {
+      var powCounts = {
+        christian: 0,
+        muslim: 0,
+        buddhist: 0,
+        hindu: 0,
+        jewish: 0,
+        unknown: 0
+      }
+      powPoint.eachLayer(function (layer) {
+        if (map.getBounds().contains(layer.getLatLng())) {
+          if (layer.religion in powCounts) {
+            powCounts[layer.religion]++;
           } else {
-            dataset.remove(row);
+            powCounts.unknown++;
           }
         }
-        for (var k in powCounts) {
-          $("#" + k + "C").text(powCounts[k]);
+      });
+      for (var i in timelinePoints) {
+        var row = timelinePoints[i];
+        if (map.getBounds().contains(row.latlng)) {
+          try {
+            dataset.add(row);
+          } catch { }
+        } else {
+          dataset.remove(row);
         }
-        count = 0;
-        municipalPoint.eachLayer(function(layer) {
-          if(map.getBounds().contains(layer.getLatLng())) {
-            count++;
-          }
-        });
-        $("#townhallC").text(count);
-        count = 0;
-        schoolPoint.eachLayer(function(layer) {
-          if(map.getBounds().contains(layer.getLatLng())) {
-            count++;
-          }
-        });
-        $("#schoolC").text(count);
       }
-
-      function fetchData() {
-        // https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/docs#/default/get__get
-        $.getJSON("https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/", {
-          bounds: map.getBounds().toBBoxString(),
-          dataset: "churches",
-          limit: 100000
-        }, function(data) {
-          console.log("OSM_API", data)
-        })
+      for (var k in powCounts) {
+        $("#" + k + "C").text(powCounts[k]);
       }
-      fetchData();
+      count = 0;
+      municipalPoint.eachLayer(function (layer) {
+        if (map.getBounds().contains(layer.getLatLng())) {
+          count++;
+        }
+      });
+      $("#townhallC").text(count);
+      count = 0;
+      schoolPoint.eachLayer(function (layer) {
+        if (map.getBounds().contains(layer.getLatLng())) {
+          count++;
+        }
+      });
+      $("#schoolC").text(count);
+    }
 
-      var opl = new L.OverPassLayer({
-        //endPoint: "https://overpass.kumi.systems/api/",
-        query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
-        minZoom: 10,
-        timeout: 3 * 60 * 1000,
-        beforeRequest: function() {
-          map.spin(true);
-        },
-        afterRequest: function() {
-          map.spin(false);
-        },
-        attribution: 'POI via <a href="http://www.overpass-api.de/">Overpass API</a>',
-        onError: function(xhr) {
-          console.error(xhr);
-        },
-        onTimeout: function(xhr) {
-          console.error(xhr);
-          alert("Request timed out");
-        },
-        onSuccess: function(data) {
-          console.log(data);
-          var geoJSON = osmtogeojson(data);
-          console.log(geoJSON);
-          function onEachFeature(feature, layer) {
-            var tags = feature.properties.tags;
-            var outString = "<b>" + tags.name + "</b><div>Religion: " + capitilize(tags.religion) + "</div><div>Denomination: " + capitilize(tags.denomination) + "</div><div>Established: " + tags.start_date + "</div><div class='pano'></div>";
-            layer.bindPopup(outString, {
-              maxWidth: "auto"
-            }).on('popupopen', popupHandler);
-            layer.bindTooltip(tags.name);
-            var latlng;
-            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
-              var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
-              latlng = [center.lng, center.lat];
-            } else if (feature.geometry.type == "Point") {
-              latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
-            } else if (feature.geometry.type == "LineString") {
-              var center = L.latLngBounds(feature.geometry.coordinates).getCenter();
-              latlng = [center.lng, center.lat];
-            } else {
-              console.error("Don't know how to handle", feature);
-              return;
+    function fetchData() {
+      // https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/docs#/default/get__get
+      $.getJSON("https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/", {
+        bounds: map.getBounds().toBBoxString(),
+        dataset: "churches",
+        limit: 100000
+      }, function (data) {
+        console.log("OSM_API", data)
+      })
+    }
+    fetchData();
+
+    var opl = new L.OverPassLayer({
+      //endPoint: "https://overpass.kumi.systems/api/",
+      query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
+      minZoom: 10,
+      timeout: 3 * 60 * 1000,
+      beforeRequest: function () {
+        map.spin(true);
+      },
+      afterRequest: function () {
+        map.spin(false);
+      },
+      attribution: 'POI via <a href="http://www.overpass-api.de/">Overpass API</a>',
+      onError: function (xhr) {
+        console.error(xhr);
+      },
+      onTimeout: function (xhr) {
+        console.error(xhr);
+        alert("Request timed out");
+      },
+      onSuccess: function (data) {
+        console.log(data);
+        var geoJSON = osmtogeojson(data);
+        console.log(geoJSON);
+        function onEachFeature(feature, layer) {
+          var tags = feature.properties.tags;
+          var outString = "<b>" + tags.name + "</b><div>Religion: " + capitilize(tags.religion) + "</div><div>Denomination: " + capitilize(tags.denomination) + "</div><div>Established: " + tags.start_date + "</div><div class='pano'></div>";
+          layer.bindPopup(outString, {
+            maxWidth: "auto"
+          }).on('popupopen', popupHandler);
+          layer.bindTooltip(tags.name);
+          var latlng;
+          if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
+            var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
+            latlng = [center.lng, center.lat];
+          } else if (feature.geometry.type == "Point") {
+            latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
+          } else if (feature.geometry.type == "LineString") {
+            var center = L.latLngBounds(feature.geometry.coordinates).getCenter();
+            latlng = [center.lng, center.lat];
+          } else {
+            console.error("Don't know how to handle", feature);
+            return;
+          }
+          var color = colors[tags.religion];
+          if (!color) {
+            color = "black";
+          }
+          var marker = L.circleMarker(latlng, { color: color }).addTo(powPoint);
+          marker.religion = tags.religion;
+          marker.id = feature.id;
+          marker.bindPopup(outString, {
+            maxWidth: "auto"
+          }).on('popupopen', popupHandler);
+          marker.bindTooltip(tags.name);
+          marker.parentLayer = powPoint;
+          markers.push(marker);
+          layer.addTo(powPoly);
+          layer.parentLayer = powPoly;
+          markers.push(layer);
+
+
+          if (tags.start_date) {
+            // Timeline functionality
+            var dateStr = tags.start_date;
+            var dt = new Date(dateStr);
+            if (dt == "Invalid Date") {
+              var matches = dateStr.match(/\d{3,4}/);
+              if (matches) {
+                dateStr = matches[0];
+                dt = new Date(dateStr);
+              }
             }
+            if (dateStr.length == 4) {
+              dt.setDate(Math.random() * 365);
+            }
+            if (dt != "Invalid Date") {
+              timelinePoints.push({ id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date, latlng: latlng });
+              marker.dt = dt;
+              layer.dt = dt;
+            }
+          }
+        }
+
+        L.geoJSON(geoJSON, {
+          onEachFeature: onEachFeature,
+          style: function (feature) {
+            var tags = feature.properties.tags;
             var color = colors[tags.religion];
             if (!color) {
               color = "black";
             }
-            var marker = L.circleMarker(latlng, {color: color}).addTo(powPoint);
-            marker.religion = tags.religion;
-            marker.id = feature.id;
-            marker.bindPopup(outString, {
-              maxWidth: "auto"
-            }).on('popupopen', popupHandler);
-            marker.bindTooltip(tags.name);
-            marker.parentLayer = powPoint;
-            markers.push(marker);
-            layer.addTo(powPoly);
-            layer.parentLayer = powPoly;
-            markers.push(layer);
-
-
-            if (tags.start_date) {
-              // Timeline functionality
-              var dateStr = tags.start_date;
-              var dt = new Date(dateStr);
-              if (dt == "Invalid Date") {
-                var matches = dateStr.match(/\d{3,4}/);
-                if (matches) {
-                  dateStr = matches[0];
-                  dt = new Date(dateStr);
-                }
-              }
-              if (dateStr.length == 4) {
-                dt.setDate(Math.random() * 365);
-              }
-              if (dt != "Invalid Date") {
-                timelinePoints.push({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date, latlng: latlng});
-                marker.dt = dt;
-                layer.dt = dt;
-              }
+            var style = {
+              color: color
             }
-          }
-
-          L.geoJSON(geoJSON, {
-            onEachFeature: onEachFeature,
-            style: function (feature) {
-              var tags = feature.properties.tags;
-              var color = colors[tags.religion];
-              if (!color) {
-                color = "black";
-              }
-              var style = {
-                color: color
-              }
-              return style;
-            },
-            filter: function (feature, layer) {
-              var id = feature.id;
-              if (addedIds[id]) {
-                return false;
-              } else {
-                addedIds[id] = true;
-                return true;
-              }
-            },
-            pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng); // how nodes (single latlng) elements should be handled (they'll still get the click handler from onEachFeature)
-            }
-          })
-          update();
-        }
-      });
-
-      var townhalls = new L.OverPassLayer({
-        //endPoint: "https://overpass.kumi.systems/api/",
-        query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}});node["amenity"="school"]({{bbox}});way["amenity"="school"]({{bbox}});relation["amenity"="school"]({{bbox}}););out body;>;out skel qt;',
-        minZoom: 10,
-        timeout: 3 * 60 * 1000,
-        onSuccess: function(data) {
-          console.log(data);
-          var geoJSON = osmtogeojson(data);
-          console.log(geoJSON);
-          function onEachFeature(feature, layer) {
-            var tags = feature.properties.tags;
-            var outString = "<b>" + tags.name + "</b><div>Established: " + tags.start_date + "</div><div class='pano'></div>";
-            layer.bindPopup(outString, {
-              maxWidth: "auto"
-            }).on('popupopen', popupHandler);
-            layer.bindTooltip(tags.name);
-            var latlng;
-            if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
-              var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
-              latlng = [center.lng, center.lat];
-            } else if (feature.geometry.type == "Point") {
-              latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
-            } else if (feature.geometry.type == "LineString") {
-              var center = L.latLngBounds(feature.geometry.coordinates).getCenter();
-              latlng = [center.lng, center.lat];
+            return style;
+          },
+          filter: function (feature, layer) {
+            var id = feature.id;
+            if (addedIds[id]) {
+              return false;
             } else {
-              console.error("Don't know how to handle", feature);
-              return;
+              addedIds[id] = true;
+              return true;
             }
-            if (tags.amenity == "school") {
-              var color = "blue";
-              var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(schoolPoint);
-              layer.addTo(schoolPoly);
-              marker.parentLayer = schoolPoint;
-              layer.parentLayer = schoolPoly;
-              markers.push(marker);
-              markers.push(layer);
-            } else {
-              var color = "hotpink";
-              var marker = L.shapeMarker(latlng, {shape: "square", radius: 10, color: color}).addTo(municipalPoint);
-              layer.addTo(municipalPoly);
-              marker.parentLayer = municipalPoint;
-              layer.parentLayer = municipalPoly;
-              markers.push(marker);
-              markers.push(layer);
-            }
-            marker.id = feature.id;
-            marker.bindPopup(outString, {
-              maxWidth: "auto"
-            }).on('popupopen', popupHandler);
-            marker.bindTooltip(tags.name);
-
-            if (tags.start_date) {
-              // Timeline functionality
-              var dateStr = tags.start_date;
-              var dt = new Date(dateStr);
-              if (dt == "Invalid Date") {
-                var matches = dateStr.match(/\d{3,4}/);
-                if (matches) {
-                  dateStr = matches[0];
-                  dt = new Date(dateStr);
-                }
-              }
-              if (dateStr.length == 4) {
-                dt.setDate(Math.random() * 365);
-              }
-              if (dt != "Invalid Date") {
-                timelinePoints.push({id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date, latlng: latlng});
-                marker.dt = dt;
-                layer.dt = dt;
-              }
-            }
+          },
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng); // how nodes (single latlng) elements should be handled (they'll still get the click handler from onEachFeature)
           }
-
-          L.geoJSON(geoJSON, {
-            onEachFeature: onEachFeature,
-            style: function (feature) {
-              var tags = feature.properties.tags;
-              if (tags.amenity == "townhall") {
-                var color = "hotpink";
-              } else if (tags.amenity == "school") {
-                var color = "blue";
-              }
-              var style = {
-                color: color
-              }
-              return style;
-            },
-            filter: function (feature, layer) {
-              var id = feature.id;
-              if (addedIds[id]) {
-                return false;
-              } else {
-                addedIds[id] = true;
-                return true;
-              }
-            },
-            pointToLayer: function (feature, latlng) {
-                return L.shapeMarker(latlng, {shape: "square", radius: 20});
-            }
-          })
-          update();
-        }
-      });
-
-      map.addLayer(opl);
-      map.addLayer(townhalls);
-
-      var baseMaps = {
-        "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
-        "CartoDB Positron": positron,
-        "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
-        "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
-        "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
-            maxZoom: 20,
-            subdomains:['mt0','mt1','mt2','mt3']
         })
+        update();
       }
+    });
 
-      var overlayMaps = {
-        "Places of worship": placesOfWorship,
-        "Municipal buildings": municipal,
-        "Schools": school,
-      }
-
-      L.control.layers(baseMaps, overlayMaps, {position: "topleft"}).addTo(map);
-      
-      $(".leaflet-control-layers-base").prepend("<b>Basemaps</b>");
-      $(".leaflet-control-layers-overlays").prepend("<b>Overlays</b>");
-
-      L.control.zoom({
-           position:'topleft'
-      }).addTo(map);
-
-      var geoSearch = new GeoSearch.GeoSearchControl({
-        provider: new GeoSearch.OpenStreetMapProvider(),
-        style: 'button',
-        autoComplete: true,
-        autoCompleteDelay: 250,
-        autoClose: true,
-        position: "topleft"
-      }).addTo(map);
-
-      map.on('zoomend', function() {
-        console.log("zoomed to " + map.getZoom());
-        if (map.getZoom() < 16){
-          placesOfWorship.removeLayer(powPoly);
-          placesOfWorship.addLayer(powPoint);
-          municipal.removeLayer(municipalPoly);
-          municipal.addLayer(municipalPoint);
-          school.removeLayer(schoolPoly);
-          school.addLayer(schoolPoint);
-          console.log("switching to markers");
-        } else {
-          placesOfWorship.removeLayer(powPoint);
-          placesOfWorship.addLayer(powPoly);
-          municipal.removeLayer(municipalPoint);
-          municipal.addLayer(municipalPoly);
-          school.removeLayer(schoolPoint);
-          school.addLayer(schoolPoly);
-          console.log("switching to polys");
-        }
-      });
-
-      map.on("moveend", function () {
-        console.log("moveend");
-        fetchData();
-        updateStats();
-      });
-
-      var legend = L.control({position: 'topleft'});
-
-      legend.onAdd = function (map) {
-          var div = L.DomUtil.create('div', 'info legend');
-          div.innerHTML += "<h4>Places of worship</h4>";
-          for (var k in colors) {
-            var color = colors[k];
-            div.innerHTML += '<i class="circle" style="background:' + color + ';border-color:' + color + '"></i> ' + capitilize(k) + ': <span id="' + k + 'C"></span><br>';
+    var townhalls = new L.OverPassLayer({
+      //endPoint: "https://overpass.kumi.systems/api/",
+      query: '(node["amenity"="townhall"]({{bbox}});way["amenity"="townhall"]({{bbox}});relation["amenity"="townhall"]({{bbox}});node["amenity"="school"]({{bbox}});way["amenity"="school"]({{bbox}});relation["amenity"="school"]({{bbox}}););out body;>;out skel qt;',
+      minZoom: 10,
+      timeout: 3 * 60 * 1000,
+      onSuccess: function (data) {
+        console.log(data);
+        var geoJSON = osmtogeojson(data);
+        console.log(geoJSON);
+        function onEachFeature(feature, layer) {
+          var tags = feature.properties.tags;
+          var outString = "<b>" + tags.name + "</b><div>Established: " + tags.start_date + "</div><div class='pano'></div>";
+          layer.bindPopup(outString, {
+            maxWidth: "auto"
+          }).on('popupopen', popupHandler);
+          layer.bindTooltip(tags.name);
+          var latlng;
+          if (feature.geometry.type === "Polygon" || feature.geometry.type == "MultiPolygon") {
+            var center = L.latLngBounds(feature.geometry.coordinates[0]).getCenter();
+            latlng = [center.lng, center.lat];
+          } else if (feature.geometry.type == "Point") {
+            latlng = L.GeoJSON.coordsToLatLng(feature.geometry.coordinates);
+          } else if (feature.geometry.type == "LineString") {
+            var center = L.latLngBounds(feature.geometry.coordinates).getCenter();
+            latlng = [center.lng, center.lat];
+          } else {
+            console.error("Don't know how to handle", feature);
+            return;
           }
+          if (tags.amenity == "school") {
+            var color = "blue";
+            var marker = L.shapeMarker(latlng, { shape: "square", radius: 10, color: color }).addTo(schoolPoint);
+            layer.addTo(schoolPoly);
+            marker.parentLayer = schoolPoint;
+            layer.parentLayer = schoolPoly;
+            markers.push(marker);
+            markers.push(layer);
+          } else {
+            var color = "hotpink";
+            var marker = L.shapeMarker(latlng, { shape: "square", radius: 10, color: color }).addTo(municipalPoint);
+            layer.addTo(municipalPoly);
+            marker.parentLayer = municipalPoint;
+            layer.parentLayer = municipalPoly;
+            markers.push(marker);
+            markers.push(layer);
+          }
+          marker.id = feature.id;
+          marker.bindPopup(outString, {
+            maxWidth: "auto"
+          }).on('popupopen', popupHandler);
+          marker.bindTooltip(tags.name);
 
-          div.innerHTML += '<br><h4>Other public infrastructure</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls: <span id="townhallC"></span><br><i style="background:blue;border-color:blue"></i>Schools: <span id="schoolC"></span>';
+          if (tags.start_date) {
+            // Timeline functionality
+            var dateStr = tags.start_date;
+            var dt = new Date(dateStr);
+            if (dt == "Invalid Date") {
+              var matches = dateStr.match(/\d{3,4}/);
+              if (matches) {
+                dateStr = matches[0];
+                dt = new Date(dateStr);
+              }
+            }
+            if (dateStr.length == 4) {
+              dt.setDate(Math.random() * 365);
+            }
+            if (dt != "Invalid Date") {
+              timelinePoints.push({ id: feature.id, start: dt, title: tags.name + ", est: " + tags.start_date, latlng: latlng });
+              marker.dt = dt;
+              layer.dt = dt;
+            }
+          }
+        }
 
-          return div;
-      };
+        L.geoJSON(geoJSON, {
+          onEachFeature: onEachFeature,
+          style: function (feature) {
+            var tags = feature.properties.tags;
+            if (tags.amenity == "townhall") {
+              var color = "hotpink";
+            } else if (tags.amenity == "school") {
+              var color = "blue";
+            }
+            var style = {
+              color: color
+            }
+            return style;
+          },
+          filter: function (feature, layer) {
+            var id = feature.id;
+            if (addedIds[id]) {
+              return false;
+            } else {
+              addedIds[id] = true;
+              return true;
+            }
+          },
+          pointToLayer: function (feature, latlng) {
+            return L.shapeMarker(latlng, { shape: "square", radius: 20 });
+          }
+        })
+        update();
+      }
+    });
 
-      legend.addTo(map);
-    </script>
-  </body>
+    map.addLayer(opl);
+    map.addLayer(townhalls);
+
+    var baseMaps = {
+      "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
+      "CartoDB Positron": positron,
+      "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
+      "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
+      "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      })
+    }
+
+    var overlayMaps = {
+      "Places of worship": placesOfWorship,
+      "Municipal buildings": municipal,
+      "Schools": school,
+    }
+
+    L.control.layers(baseMaps, overlayMaps, { position: "topleft" }).addTo(map);
+
+    $(".leaflet-control-layers-base").prepend("<b>Basemaps</b>");
+    $(".leaflet-control-layers-overlays").prepend("<b>Overlays</b>");
+
+    L.control.zoom({
+      position: 'topleft'
+    }).addTo(map);
+
+    var geoSearch = new GeoSearch.GeoSearchControl({
+      provider: new GeoSearch.OpenStreetMapProvider(),
+      style: 'button',
+      autoComplete: true,
+      autoCompleteDelay: 250,
+      autoClose: true,
+      position: "topleft"
+    }).addTo(map);
+
+    map.on('zoomend', function () {
+      console.log("zoomed to " + map.getZoom());
+      if (map.getZoom() < 16) {
+        placesOfWorship.removeLayer(powPoly);
+        placesOfWorship.addLayer(powPoint);
+        municipal.removeLayer(municipalPoly);
+        municipal.addLayer(municipalPoint);
+        school.removeLayer(schoolPoly);
+        school.addLayer(schoolPoint);
+        console.log("switching to markers");
+      } else {
+        placesOfWorship.removeLayer(powPoint);
+        placesOfWorship.addLayer(powPoly);
+        municipal.removeLayer(municipalPoint);
+        municipal.addLayer(municipalPoly);
+        school.removeLayer(schoolPoint);
+        school.addLayer(schoolPoly);
+        console.log("switching to polys");
+      }
+    });
+
+    map.on("moveend", function () {
+      console.log("moveend");
+      fetchData();
+      updateStats();
+    });
+
+    var legend = L.control({ position: 'topleft' });
+
+    legend.onAdd = function (map) {
+      var div = L.DomUtil.create('div', 'info legend');
+      div.innerHTML += "<h4>Places of worship</h4>";
+      for (var k in colors) {
+        var color = colors[k];
+        div.innerHTML += '<i class="circle" style="background:' + color + ';border-color:' + color + '"></i> ' + capitilize(k) + ': <span id="' + k + 'C"></span><br>';
+      }
+
+      div.innerHTML += '<br><h4>Other public infrastructure</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls: <span id="townhallC"></span><br><i style="background:blue;border-color:blue"></i>Schools: <span id="schoolC"></span>';
+
+      return div;
+    };
+
+    legend.addTo(map);
+  </script>
+</body>
+
 </html>
