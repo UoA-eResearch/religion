@@ -69,9 +69,9 @@ def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:boo
         if feature["properties"].get("lat", 0) > bounds[1] and feature["properties"].get("lat", 0) < bounds[3] and feature["properties"].get("lng", 0) > bounds[0] and feature["properties"].get("lng", 0) < bounds[2]:
             feature = {"type": "Feature", "properties": feature["properties"], "geometry": feature["geometry"]}
             if keys:
-                feature["properties"] = {key: feature["properties"][key] for key in keys.split(",")}
+                feature["properties"] = {key: feature["properties"].get(key) for key in keys.split(",")}
             if centroid_only:
-                feature["geometry"] = {"type": "Point", "coordinates": [feature["properties"]["lng"], feature["properties"]["lat"]]}
+                feature["geometry"] = {"type": "Point", "coordinates": [feature["properties"].get("lng", 0), feature["properties"].get("lat", 0)]}
             features.append(feature)
             if len(features) == limit:
                 break
