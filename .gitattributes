@@ -1,3 +1,6 @@
 churches.geojson filter=lfs diff=lfs merge=lfs -text
 schools.geojson filter=lfs diff=lfs merge=lfs -text
 townhalls.geojson filter=lfs diff=lfs merge=lfs -text
+*_nodes.json filter=lfs diff=lfs merge=lfs -text
+*_ways.json filter=lfs diff=lfs merge=lfs -text
+*_relations.json filter=lfs diff=lfs merge=lfs -text

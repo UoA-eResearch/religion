@@ -240,6 +240,18 @@
         $("#schoolC").text(count);
       }
 
+      function fetchData() {
+        // https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/docs#/default/get__get
+        $.getJSON("https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/", {
+          bounds: map.getBounds().toBBoxString(),
+          dataset: "churches",
+          limit: 100000
+        }, function(data) {
+          console.log("OSM_API", data)
+        })
+      }
+      fetchData();
+
       var opl = new L.OverPassLayer({
         //endPoint: "https://overpass.kumi.systems/api/",
         query: '(node["amenity"="place_of_worship"]({{bbox}});way["amenity"="place_of_worship"]({{bbox}});relation["amenity"="place_of_worship"]({{bbox}}););out body;>;out skel qt;',
@@ -519,6 +531,7 @@
 
       map.on("moveend", function () {
         console.log("moveend");
+        fetchData();
         updateStats();
       });
 

@@ -6,18 +6,50 @@ import simdjson as json
 import shapely
 from tqdm.auto import tqdm
 import time
+from osm2geojson import json2shapes
+import pandas as pd
+
+def load(prefix="churches"):
+    nodes = json.load(open(f"{prefix}_nodes.json"))
+    print(f'Loaded {len(nodes["elements"])} nodes')
+    ways = json.load(open(f"{prefix}_ways.json"))
+    print(f'Loaded {len(ways["elements"])} ways')
+    relations = json.load(open(f"{prefix}_relations.json"))
+    print(f'Loaded {len(relations["elements"])} relations')
+    shapes = []
+    try:
+        shapes.extend(json2shapes(nodes))
+    except:
+        print("Unable to parse nodes")
+    try:
+        shapes.extend(json2shapes(ways))
+    except:
+        print("Unable to parse ways")
+    try:
+        shapes.extend(json2shapes(relations))
+    except:
+        print("Unable to parse relations")
+    filtered_shapes = []
+    for feature in tqdm(shapes):
+        tags = feature["properties"]["tags"]
+        if feature["shape"].is_empty:
+            continue
+        filtered_shapes.append({
+            "lat": feature["shape"].centroid.y,
+            "lng": feature["shape"].centroid.x,
+            "name": tags.get("name"),
+            "religion": tags.get("religion"),
+            "denomination": tags.get("denomination"),
+            "start_date": tags.get("start_date")
+        })
+    df = pd.DataFrame(filtered_shapes)
+    return df
 
 s = time.time()
-churches = json.load(open("churches.geojson"))
-print(f'{len(churches["features"])} churches loaded in {time.time()-s:.2f}s')
-
-s = time.time()
-schools = json.load(open("schools.geojson"))
-print(f'{len(schools["features"])} schools loaded in {time.time()-s:.2f}s')
-
-s = time.time()
-townhalls = json.load(open("townhalls.geojson"))
-print(f'{len(townhalls["features"])} townhalls loaded in {time.time()-s:.2f}s')
+churches = load("churches")
+schools = load("schools")
+townhalls = load("townhalls")
+print(f"Loaded data in {time.time() - s} seconds")
 
 app = FastAPI(root_path="/OSM_API")
 
@@ -29,33 +61,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def get_centroid(feature):
-    geom = feature["geometry"]
-    try:
-        return shapely.from_geojson(json.dumps(geom)).centroid
-    except:
-        if geom["type"] in ["MultiPolygon", "MultiLineString"]:
-            geom["coordinates"] = [part for part in geom["coordinates"] if len(part) > 1]
-        try:
-            return shapely.from_geojson(json.dumps(geom)).centroid
-        except Exception as e:
-            return shapely.from_geojson(json.dumps(geom)).representative_point()
-
-for dataset in [churches, schools, townhalls]:
-    centroids = 0
-    for feature in tqdm(dataset["features"]):
-        centroid = get_centroid(feature)
-        if centroid:
-            centroids += 1
-            feature["properties"]["lat"] = centroid.y
-            feature["properties"]["lng"] = centroid.x
-        else:
-            feature["properties"]["lat"] = 0
-            feature["properties"]["lng"] = 0
-    print(f"{centroids} centroids calculated for {len(dataset['features'])} features")
-
 @app.get("/")
-def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:bool = False, limit:int = 100):
+def get(bounds:str = "-90,-180,90,180", dataset:str = "churches", limit:int = 100):
     try:
         bounds = list(map(float, bounds.split(",")))
         if len(bounds) != 4:
@@ -70,15 +77,12 @@ def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:boo
         data = townhalls
     else:
         raise HTTPException(status_code=400, detail="Invalid dataset")
-    features = []
-    for feature in data["features"]:
-        if feature["properties"].get("lat", 0) > bounds[1] and feature["properties"].get("lat", 0) < bounds[3] and feature["properties"].get("lng", 0) > bounds[0] and feature["properties"].get("lng", 0) < bounds[2]:
-            feature = {"type": "Feature", "properties": feature["properties"], "geometry": feature["geometry"]}
-            if keys:
-                feature["properties"] = {key: feature["properties"].get(key) for key in keys.split(",")}
-            if centroid_only:
-                feature["geometry"] = {"type": "Point", "coordinates": [feature["properties"].get("lng", 0), feature["properties"].get("lat", 0)]}
-            features.append(feature)
-            if len(features) == limit:
-                break
-    return {"type": "FeatureCollection", "features": features}
+    filtered_data = data[
+        (data["lng"] >= bounds[0])
+        & (data["lat"] >= bounds[1])
+        & (data["lng"] <= bounds[2])
+        & (data["lat"] <= bounds[3])
+    ]
+    if limit:
+        filtered_data = filtered_data.head(limit)
+    return filtered_data.to_dict(orient="records")
