@@ -42,11 +42,17 @@ def get_centroid(feature):
             return shapely.from_geojson(json.dumps(geom)).representative_point()
 
 for dataset in [churches, schools, townhalls]:
+    centroids = 0
     for feature in tqdm(dataset["features"]):
         centroid = get_centroid(feature)
-        assert not centroid.is_empty
-        feature["properties"]["lat"] = centroid.y
-        feature["properties"]["lng"] = centroid.x
+        if centroid:
+            centroids += 1
+            feature["properties"]["lat"] = centroid.y
+            feature["properties"]["lng"] = centroid.x
+        else:
+            feature["properties"]["lat"] = 0
+            feature["properties"]["lng"] = 0
+    print(f"{centroids} centroids calculated for {len(dataset['features'])} features")
 
 @app.get("/")
 def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:bool = False, limit:int = 100):
