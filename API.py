@@ -32,11 +32,7 @@ app.add_middleware(
 def get_centroid(feature):
     geom = feature["geometry"]
     if geom["type"] in ["MultiPolygon", "MultiLineString"]:
-        parts = []
-        for part in geom["coordinates"]:
-            if len(part) > 1:
-                parts.append(part)
-        geo["coordinates"] = parts
+        geom["coordinates"] = [part for part in geom["coordinates"] if len(part) > 1]
     try:
         return shapely.from_geojson(json.dumps(geom)).centroid
     except:
