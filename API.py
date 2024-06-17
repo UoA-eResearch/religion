@@ -32,7 +32,11 @@ app.add_middleware(
 def get_centroid(feature):
     geom = feature["geometry"]
     if geom["type"] in ["MultiPolygon", "MultiLineString"]:
-        geom["coordinates"] = [part for part in geom["coordinates"] if len(part) > 1]
+        parts = []
+        for part in geom["coordinates"]:
+            if len(part) > 1:
+                parts.append(part)
+        geo["coordinates"] = parts
     try:
         return shapely.from_geojson(json.dumps(geom)).centroid
     except:
@@ -66,7 +70,7 @@ def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:boo
         raise HTTPException(status_code=400, detail="Invalid dataset")
     features = []
     for feature in data["features"]:
-        if feature["properties"]["lat"] > bounds[1] and feature["properties"]["lat"] < bounds[3] and feature["properties"]["lng"] > bounds[0] and feature["properties"]["lng"] < bounds[2]:
+        if feature["properties"].get("lat", 0) > bounds[1] and feature["properties"].get("lat", 0) < bounds[3] and feature["properties"].get("lng", 0) > bounds[0] and feature["properties"].get("lng", 0) < bounds[2]:
             feature = {"type": "Feature", "properties": feature["properties"], "geometry": feature["geometry"]}
             if keys:
                 feature["properties"] = {key: feature["properties"][key] for key in keys.split(",")}
