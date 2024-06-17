@@ -31,25 +31,22 @@ app.add_middleware(
 
 def get_centroid(feature):
     geom = feature["geometry"]
-    if geom["type"] in ["MultiPolygon", "MultiLineString"]:
-        geom["coordinates"] = [part for part in geom["coordinates"] if len(part) > 1]
     try:
         return shapely.from_geojson(json.dumps(geom)).centroid
     except:
+        if geom["type"] in ["MultiPolygon", "MultiLineString"]:
+            geom["coordinates"] = [part for part in geom["coordinates"] if len(part) > 1]
         try:
-            return shapely.from_geojson(json.dumps(geom)).representative_point()
+            return shapely.from_geojson(json.dumps(geom)).centroid
         except Exception as e:
-            print(e, feature)
+            return shapely.from_geojson(json.dumps(geom)).representative_point()
 
 for dataset in [churches, schools, townhalls]:
     for feature in tqdm(dataset["features"]):
         centroid = get_centroid(feature)
-        if centroid:
-            feature["properties"]["lat"] = centroid.y
-            feature["properties"]["lng"] = centroid.x
-        else:
-            feature["properties"]["lat"] = 0
-            feature["properties"]["lng"] = 0
+        assert not centroid.is_empty
+        feature["properties"]["lat"] = centroid.y
+        feature["properties"]["lng"] = centroid.x
 
 @app.get("/")
 def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:bool = False, limit:int = 100):
