@@ -47,6 +47,9 @@ for dataset in [churches, schools, townhalls]:
         if centroid:
             feature["properties"]["lat"] = centroid.y
             feature["properties"]["lng"] = centroid.x
+        else:
+            feature["properties"]["lat"] = 0
+            feature["properties"]["lng"] = 0
 
 @app.get("/")
 def get(bounds:str, dataset:str = "churches", keys:str = None, centroid_only:bool = False, limit:int = 100):
