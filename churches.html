@@ -199,16 +199,18 @@
         sikh: 0,
         unknown: 0
       }
-      var timeline_items = []
+      var timeline_items = {}
       for (var d of window.churches) {
         if (d.religion in powCounts) {
           powCounts[d.religion] += 1;
         } else {
           powCounts.unknown += 1;
         }
-        if (d.parsed_date) timeline_items.push({ id: d.id, start: d.parsed_date, title: d.name + ", est: " + d.start_date, latlng: [d.lat, d.lng] });
+        if (d.parsed_date) {
+          timeline_items[d.id] = { id: d.id, start: d.parsed_date, title: d.name + ", est: " + d.start_date, latlng: [d.lat, d.lng] }
+        }
       }
-      dataset.add(timeline_items)
+      dataset.add(Object.values(timeline_items))
       var sum = Object.values(powCounts).reduce((a, b) => a + b, 0);
       if (sum == limit) {
         $("#totalC").css("color", "red");

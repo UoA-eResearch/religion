@@ -78,11 +78,9 @@ def get(bounds:str = "-90,-180,90,180", dataset:str = "churches", limit:int = 10
     else:
         raise HTTPException(status_code=400, detail="Invalid dataset")
     filtered_data = data[
-        (data["lng"] >= bounds[0])
-        & (data["lat"] >= bounds[1])
-        & (data["lng"] <= bounds[2])
-        & (data["lat"] <= bounds[3])
+        data["lng"].between(bounds[0], bounds[2]) &
+        data["lat"].between(bounds[1], bounds[3])
     ]
     if limit:
-        filtered_data = filtered_data.head(limit)
+        filtered_data = filtered_data.sample(limit)
     return filtered_data.to_dict(orient="records")
