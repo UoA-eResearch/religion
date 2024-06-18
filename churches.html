@@ -312,15 +312,15 @@
           console.log(data)
           map.spin(false)
           $("#totalC").text(data.meta.churches?.toLocaleString() || 0)
-          if (data.meta.churches > limit) {
+          if (data.meta.churches > limit && datasets_to_fetch.includes("churches")) {
             $("#totalC").append(" (displaying 100K)")
           }
           $("#schoolC").text(data.meta.schools?.toLocaleString() || 0)
-          if (data.meta.schools > limit) {
+          if (data.meta.schools > limit && datasets_to_fetch.includes("schools")) {
             $("#schoolC").append(" (displaying 100K)")
           }
           $("#townhallC").text(data.meta.townhalls?.toLocaleString() || 0)
-          if (data.meta.townhalls > limit) {
+          if (data.meta.townhalls > limit && datasets_to_fetch.includes("townhalls")) {
             $("#townhallC").append(" (displaying 100K)")
           }
           if (window.churchesLayer) window.churchesLayer.remove()
