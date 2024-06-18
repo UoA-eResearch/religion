@@ -81,6 +81,6 @@ def get(bounds:str = "-90,-180,90,180", dataset:str = "churches", limit:int = 10
         data["lng"].between(bounds[0], bounds[2]) &
         data["lat"].between(bounds[1], bounds[3])
     ]
-    if limit:
+    if len(filtered_data) > limit:
         filtered_data = filtered_data.sample(limit)
     return filtered_data.to_dict(orient="records")
