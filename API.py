@@ -39,7 +39,10 @@ def get(bounds:str = "-90,-180,90,180", dataset:str = "churches", limit:int = 10
     except:
         raise HTTPException(status_code=400, detail="Invalid bounds")
     s = time.time()
-    filtered_df = df.cx[bounds[0]:bounds[2], bounds[1]:bounds[3]]
+    filtered_df = df[
+        df["lng"].between(bounds[0], bounds[2]) &
+        df["lat"].between(bounds[1], bounds[3])
+    ]
     print(f"Filtered data in {time.time() - s} seconds")
     result = {
         "meta": filtered_df["type"].value_counts().to_dict()
