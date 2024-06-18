@@ -224,17 +224,17 @@
       }
       if (window.townhalls.length == limit) {
         $("#townhallC").css("color", "red");
-        $("#townhallC").text(window.townhalls.length + " (at limit)");
+        $("#townhallC").text(window.townhalls.length.toLocaleString() + " (at limit)");
       } else {
         $("#townhallC").css("color", "white");
-        $("#townhallC").text(window.townhalls.length);
+        $("#townhallC").text(window.townhalls.length.toLocaleString());
       }
       if (window.schools.length == limit) {
         $("#schoolC").css("color", "red");
-        $("#schoolC").text(window.schools.length + " (at limit)");
+        $("#schoolC").text(window.schools.length.toLocaleString() + " (at limit)");
       } else {
         $("#schoolC").css("color", "white");
-        $("#schoolC").text(window.schools.length);
+        $("#schoolC").text(window.schools.length.toLocaleString());
       }
     }
 
