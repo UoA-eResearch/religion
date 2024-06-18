@@ -21,6 +21,7 @@
     integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77710107-11"></script>
   <script>
@@ -148,9 +149,9 @@
     var markers = [];
     var timelinePoints = [];
 
-    var placesOfWorship = L.layerGroup().addTo(map);
-    var municipal = L.layerGroup()//.addTo(map);
-    var school = L.layerGroup()//.addTo(map);
+    var churches_layer = L.layerGroup().addTo(map);
+    var municipal_layer = L.layerGroup()//.addTo(map);
+    var school_layer = L.layerGroup()//.addTo(map);
 
     map.on("popupopen", function (e) {
       console.log(e);
@@ -201,44 +202,43 @@
       }
       var timeline_items = {}
       for (var d of window.churches) {
-        if (d.religion in powCounts) {
-          powCounts[d.religion] += 1;
-        } else {
-          powCounts.unknown += 1;
-        }
-        if (d.parsed_date) {
-          timeline_items[d.id] = { id: d.id, start: d.parsed_date, title: d.name + ", est: " + d.start_date, latlng: [d.lat, d.lng] }
+        if (map.getBounds().contains([d.lat, d.lng])) {
+          if (d.religion in powCounts) {
+            powCounts[d.religion] += 1;
+          } else {
+            powCounts.unknown += 1;
+          }
+          if (d.parsed_date) {
+            timeline_items[d.id] = { id: d.id, start: d.parsed_date, title: d.name + ", est: " + d.start_date, latlng: [d.lat, d.lng] }
+          }
         }
       }
+      dataset.clear()
       dataset.add(Object.values(timeline_items))
       var sum = Object.values(powCounts).reduce((a, b) => a + b, 0);
-      if (sum == limit) {
-        $("#totalC").css("color", "red");
-        $("#totalC").text(sum.toLocaleString() + " (at limit)");
-      } else {
-        $("#totalC").css("color", "white");
-        $("#totalC").text(sum.toLocaleString());
-      }
+      $("#totalC").text(sum.toLocaleString());
       for (var k in powCounts) {
         $("#" + k + "C").text(powCounts[k].toLocaleString());
       }
-      if (window.townhalls.length == limit) {
-        $("#townhallC").css("color", "red");
-        $("#townhallC").text(window.townhalls.length.toLocaleString() + " (at limit)");
-      } else {
-        $("#townhallC").css("color", "white");
-        $("#townhallC").text(window.townhalls.length.toLocaleString());
+      var count = 0
+      for (var d of window.townhalls) {
+        if (map.getBounds().contains([d.lat, d.lng])) {
+          count++;
+        }
       }
-      if (window.schools.length == limit) {
-        $("#schoolC").css("color", "red");
-        $("#schoolC").text(window.schools.length.toLocaleString() + " (at limit)");
-      } else {
-        $("#schoolC").css("color", "white");
-        $("#schoolC").text(window.schools.length.toLocaleString());
+      $("#townhallC").text(count.toLocaleString());
+      count = 0
+      for (var d of window.schools) {
+        if (map.getBounds().contains([d.lat, d.lng])) {
+          count++;
+        }
       }
+      $("#schoolC").text(count.toLocaleString());
     }
 
     function createPointsLayer(data, dataset = "churches") {
+      var data = data.filter(d => map.getBounds().contains([d.lat, d.lng]))
+      console.log(data)
       var points = data.map(f => [f.lat, f.lng])
       var pointsLayer = L.glify.points({
         map: map,
@@ -261,14 +261,18 @@
         hover: function (e, point) {
           var i = points.indexOf(point);
           var feature = data[i];
+          if (!feature) {
+            console.error(data, i, feature)
+            return;
+          }
           if (window.tooltip) map.closeTooltip(window.tooltip)
           window.tooltip = L.tooltip()
             .setContent(feature.name)
             .setLatLng(point)
             .addTo(map);
         },
-        sensitivity: 5,
-        sensitivityHover: 5,
+        sensitivity: 2,
+        sensitivityHover: 2,
         click: function (e, point) {
           var i = points.indexOf(point);
           var feature = data[i];
@@ -317,28 +321,43 @@
       }
     }
 
-    window.limit = 100000
-
-    async function fetchData() {
-      // https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/docs#/default/get__get
-      var bounds = map.getBounds().toBBoxString();
-      var response = await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/?bounds=${bounds}&dataset=churches&limit=${limit}`)
-      window.churches = await response.json();
-      response = await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/?bounds=${bounds}&dataset=townhalls&limit=${limit}`)
-      window.townhalls = await response.json();
-      response = await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/OSM_API/?bounds=${bounds}&dataset=schools&limit=${limit}`)
-      window.schools = await response.json()
-      console.log("churches", churches, "townhalls", townhalls, "schools", schools)
-
-      dataset.clear()
-      parseDates(churches);
-      createPointsLayer(churches, "churches")
-      if (map.hasLayer(municipal)) {
+    function updatePoints() {
+      if (map.hasLayer(churches_layer)) {
+        createPointsLayer(churches, "churches")
+      }
+      if (map.hasLayer(municipal_layer)) {
         createPointsLayer(townhalls, "townhalls")
       }
-      if (map.hasLayer(schools)) {
+      if (map.hasLayer(school_layer)) {
         createPointsLayer(schools, "schools")
       }
+    }
+
+    async function fetchData() {
+      var startTime = performance.now()
+      var [r1, r2, r3] = await Promise.all([
+        fetch(`churches.csv`),
+        fetch(`townhalls.csv`),
+        fetch(`schools.csv`)
+      ])
+      var [r1, r2, r3] = await Promise.all([
+        r1.text(),
+        r2.text(),
+        r3.text(),
+      ])
+      console.log("fetch time", performance.now() - startTime)
+      var opts = {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true
+      }
+      window.churches = await Papa.parse(r1, opts).data;
+      window.townhalls = await Papa.parse(r2, opts).data;
+      window.schools = await Papa.parse(r3, opts).data;
+      console.log("parse time", performance.now() - startTime)
+      console.log("churches", churches, "townhalls", townhalls, "schools", schools)
+      parseDates(churches);
+      updatePoints();
       updateStats();
     }
     fetchData();
@@ -355,9 +374,9 @@
     }
 
     var overlayMaps = {
-      "Places of worship": placesOfWorship,
-      "Municipal buildings": municipal,
-      "Schools": school,
+      "Places of worship": churches_layer,
+      "Municipal buildings": municipal_layer,
+      "Schools": school_layer,
     }
 
     L.control.layers(baseMaps, overlayMaps, { position: "topleft" }).addTo(map);
@@ -402,7 +421,8 @@
 
     map.on("moveend", function () {
       console.log("moveend");
-      fetchData();
+      updatePoints();
+      updateStats();
     });
 
     var legend = L.control({ position: 'topleft' });
