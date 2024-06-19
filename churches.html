@@ -135,15 +135,19 @@
       }
     });
 
-    var colors = {
-      christian: { "r": 1, "g": 0, "b": 0 },
-      muslim: { "r": 0, "g": 1, "b": 0 },
-      buddhist: { "r": 0, "g": 0, "b": 1 },
-      hindu: { "r": 1, "g": 0.5, "b": 0 },
-      jewish: { "r": 0.5, "g": 0, "b": 0.5 },
-      sikh: { "r": 1, "g": 1, "b": 0 },
-      unknown: { "r": 0, "g": 0, "b": 0 }
-    }
+    const colors = {
+      christian: { r: 1, g: 0, b: 0 },     // Red
+      muslim: { r: 0, g: 1, b: 0 },        // Green
+      buddhist: { r: 1, g: 1, b: 0 },      // Yellow
+      hindu: { r: 1, g: 0.5, b: 0 },       // Orange
+      jewish: { r: 0, g: 0, b: 1 },        // Blue
+      sikh: { r: 0.5, g: 0, b: 0.5 },      // Purple
+      shinto: { r: 1, g: 0.75, b: 0.8 },   // Pink
+      taoist: { r: 0, g: 1, b: 1 },        // Cyan
+      unknown: { r: 0.5, g: 0.5, b: 0.5 }, // Gray
+      townhalls: { r: 0, g: 0.5, b: 1 },    // Sky Blue
+      schools: { r: 1, g: 0.75, b: 0 }      // Gold
+    };
 
     var markers = [];
     var timelinePoints = [];
@@ -190,15 +194,7 @@
     }
 
     function updateStats() {
-      var powCounts = {
-        christian: 0,
-        muslim: 0,
-        buddhist: 0,
-        hindu: 0,
-        jewish: 0,
-        sikh: 0,
-        unknown: 0
-      }
+      var powCounts = { christian: 0, muslim: 0, buddhist: 0, hindu: 0, jewish: 0, sikh: 0, shinto: 0, taoist: 0, unknown: 0 }
       var timeline_items = {}
       for (var d of window.churches) {
         if (d.religion in powCounts) {
@@ -232,9 +228,9 @@
               return colors.unknown
             }
           } else if (data[i].type == "townhalls") {
-            return { r: 1, g: 0, b: 1 }
+            return colors.townhalls
           } else if (data[i].type == "schools") {
-            return { r: 0, g: 1, b: 1 }
+            return colors.schools
           }
         },
         hover: function (e, point) {
@@ -417,12 +413,13 @@
       var div = L.DomUtil.create('div', 'info legend');
       div.innerHTML += "<h4>Places of worship</h4>";
       for (var k in colors) {
+        if (k == "townhalls" || k == "schools") continue;
         var color = colors[k];
         div.innerHTML += `<i class="circle" style="background:rgb(${color.r * 255}, ${color.g * 255}, ${color.b * 255})"></i>${capitilize(k)}: <span id="${k}C"></span><br>`;
       }
       div.innerHTML += `<br>Total: <span id="totalC"></span><br>`
 
-      div.innerHTML += '<br><h4>Other public infrastructure</h4><i style="background:hotpink;border-color:hotpink"></i>Town halls: <span id="townhallC"></span><br><i style="background:cyan;border-color:cyan"></i>Schools: <span id="schoolC"></span>';
+      div.innerHTML += `<br><h4>Other public infrastructure</h4><i class="circle" style="background:rgb(${colors.townhalls.r * 255}, ${colors.townhalls.g * 255}, ${colors.townhalls.b * 255});border-color:hotpink"></i>Town halls: <span id="townhallC"></span><br><i class="circle" style="background:rgb(${colors.schools.r * 255}, ${colors.schools.g * 255}, ${colors.schools.b * 255})"></i>Schools: <span id="schoolC"></span>`;
 
       return div;
     };
