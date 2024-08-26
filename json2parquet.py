@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 import simdjson as json
 import shapely
 from tqdm.auto import tqdm
