@@ -2,3 +2,4 @@ data
 __pycache__/
 nohup.out
 .vscode
+auth_token
