@@ -389,7 +389,9 @@
           var marker = L.circleMarker([r["location.latitude"], r["location.longitude"]], {color: color}).bindTooltip(r["displayName.text"]).addTo(gmaps);
           marker.bindPopup(`<b>${r["displayName.text"]}</b><br>
             ${r.formattedAddress}<br>
+            Primary type: ${r.primaryType}<br>
             Types: ${JSON.parse(r.types.replace(/'/g, '"'))}<br>
+            Icon: ${r.iconMaskBaseUri.replace("https://maps.gstatic.com/mapfiles/place_api/icons/v2/", "").replace("_pinlet", "").replace("worship_", "")}<br>
             Rating: ${r.rating}<br>
             <div class='pano'></div>
           `);
