@@ -383,6 +383,8 @@
             color = "blue"
           } else if (r.types.includes("buddhist_temple")) {
             color = "yellow"
+          } else if (r.iconMaskBaseUri.includes("sikh")) {
+            color = "purple"
           }
           var marker = L.circleMarker([r["location.latitude"], r["location.longitude"]], {color: color}).bindTooltip(r["displayName.text"]).addTo(gmaps);
           marker.bindPopup(`<b>${r["displayName.text"]}</b><br>
