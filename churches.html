@@ -17,6 +17,7 @@
   <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
   <script src="https://unpkg.com/vis@4.21.0/dist/vis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
     integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" />
@@ -155,6 +156,7 @@
     var placesOfWorship = L.layerGroup().addTo(map);
     var municipal = L.layerGroup()//.addTo(map);
     var school = L.layerGroup()//.addTo(map);
+    var gmaps = L.layerGroup()
 
     map.on("popupopen", function (e) {
       console.log(e);
@@ -242,8 +244,8 @@
             .setLatLng(point)
             .addTo(map);
         },
-        sensitivity: 5,
-        sensitivityHover: 5,
+        sensitivity: 2,
+        sensitivityHover: 2,
         click: function (e, point) {
           var i = points.indexOf(point);
           var feature = data[i];
@@ -299,7 +301,7 @@
       // https://api-proxy.auckland-cer.cloud.edu.au/OSM_API_v2/docs#/default/get__get
       var bounds = map.getBounds().toBBoxString();
       if (window.pending_request) window.pending_request.abort();
-      map.spin(true)
+      //map.spin(true)
       window.pending_request = $.getJSON("https://api-proxy.auckland-cer.cloud.edu.au/OSM_API_v2", {
           bounds: bounds,
           dataset: datasets_to_fetch.join(","),
@@ -356,9 +358,43 @@
       "Places of worship": placesOfWorship,
       "Municipal buildings": municipal,
       "Schools": school,
+      "NZ Google Maps places of worship": gmaps
     }
 
     L.control.layers(baseMaps, overlayMaps, { position: "topleft" }).addTo(map);
+
+    Papa.parse("gmaps.csv", {
+      download: true,
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        console.log(results)
+        results.data = results.data.filter(r => r.types.includes("place_of_worship"))
+        for (var r of results.data) {
+          var color = r.iconBackgroundColor
+          if (r.types.includes("church")) {
+            color = "red"
+          } else if (r.types.includes("hindu_temple")) {
+            color = "orange"
+          } else if (r.types.includes("mosque")) {
+            color = "green"
+          } else if (r.types.includes("synagogue")) {
+            color = "blue"
+          } else if (r.types.includes("buddhist_temple")) {
+            color = "yellow"
+          }
+          var marker = L.circleMarker([r["location.latitude"], r["location.longitude"]], {color: color}).bindTooltip(r["displayName.text"]).addTo(gmaps);
+          marker.bindPopup(`<b>${r["displayName.text"]}</b><br>
+            ${r.formattedAddress}<br>
+            Types: ${JSON.parse(r.types.replace(/'/g, '"'))}<br>
+            Rating: ${r.rating}<br>
+            <div class='pano'></div>
+          `);
+          markers.push(marker);
+        }
+      }
+    })
 
 
     map.on("overlayadd", function (e) {
