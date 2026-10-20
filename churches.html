@@ -15,6 +15,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@latest/assets/css/leaflet.css">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhSHcGYySVS9nLEZ1mF73Gv_9z41rNOXs"></script>
   <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
   <script src="https://unpkg.com/vis@4.21.0/dist/vis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -48,9 +51,10 @@
   <script>
     var map = L.map('map', {
       worldCopyJump: true,
+      maxZoom: 19,
       zoomControl: false // Zoom added layer for ordering
     }).setView([-36.8862, 174.7651], 12);
-    var positron = L.tileLayer.provider('CartoDB.Positron').addTo(map);
+    var positron = L.maplibreGL({style: 'https://tiles.openfreemap.org/styles/positron'}).addTo(map);
 
     // DOM element where the Timeline will be attached
     var container = document.getElementById('timeline');
@@ -345,8 +349,8 @@
 
     var baseMaps = {
       "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
-      "CartoDB Positron": positron,
-      "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
+      "OpenFreeMap Positron": positron,
+      "OpenFreeMap Dark": L.maplibreGL({style: "https://tiles.openfreemap.org/styles/dark"}),
       "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
       "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
         maxZoom: 20,

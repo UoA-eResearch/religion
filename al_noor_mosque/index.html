@@ -16,6 +16,9 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
     <script src="https://unpkg.com/leaflet-providers@1.3.0/leaflet-providers.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+    <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
     <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.3.7/papaparse.min.js"></script>
     <!-- load animation tweening lib requirement for CanvasFlowMapLayer -->
@@ -71,6 +74,7 @@
         var map = L.map('map', {
             center: [15, 41],
             zoom: 3,
+            maxZoom: 19,
             worldCopyJump: true
         });
 
@@ -79,8 +83,8 @@
         var baseMaps = {
             "OSM": L.tileLayer.provider("OpenStreetMap.Mapnik"),
             //"OSM Grayscale": L.tileLayer.provider("OpenStreetMap.BlackAndWhite").addTo(map),
-            "CartoDB Positron": L.tileLayer.provider('CartoDB.Positron').addTo(map),
-            "CartoDB Dark Matter": L.tileLayer.provider("CartoDB.DarkMatter"),
+            "OpenFreeMap Positron": L.maplibreGL({style: 'https://tiles.openfreemap.org/styles/positron'}).addTo(map),
+            "OpenFreeMap Dark": L.maplibreGL({style: "https://tiles.openfreemap.org/styles/dark"}),
             "ESRI WorldImagery": L.tileLayer.provider("Esri.WorldImagery"),
             "Google Hybrid": L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
                 maxZoom: 20,
